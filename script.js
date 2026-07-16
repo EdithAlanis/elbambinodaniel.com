@@ -1,27 +1,9 @@
 const PRODUCTS = [
-  {id:'p-antidoping',name:'Prueba antidoping de 6 parámetros',detail:'Precio por pieza',price:100,category:'Pruebas rápidas',icon:'🧪',badge:'Oferta'},
-  {id:'p-antidoping-caja',name:'Caja de pruebas antidoping',detail:'Caja con 25 piezas',price:2350,category:'Pruebas rápidas',icon:'📦',badge:'Oferta'},
-  {id:'p-dengue',name:'Prueba Dengue Dúo',detail:'IgG/IgM + NS1, por pieza',price:90,category:'Pruebas rápidas',icon:'🦟',badge:'Oferta'},
-  {id:'p-dengue-caja',name:'Caja Dengue Dúo',detail:'Caja con 25 pruebas',price:2100,category:'Pruebas rápidas',icon:'📦',badge:'Oferta'},
-  {id:'p-covid',name:'Prueba COVID e Influenza Dúo',detail:'COVID-19 + Influenza A/B, por pieza',price:90,category:'Pruebas rápidas',icon:'🦠',badge:'Oferta'},
-  {id:'p-covid-caja',name:'Caja COVID e Influenza Dúo',detail:'Caja con 25 pruebas',price:2050,category:'Pruebas rápidas',icon:'📦',badge:'Oferta'},
-  {id:'p-cuadruple',name:'Prueba cuádruple rápida 4 en 1',detail:'COVID-19 + Influenza A/B + VRS + Adenovirus',price:120,category:'Pruebas rápidas',icon:'🧬',badge:'Oferta'},
-  {id:'p-cuadruple-caja',name:'Caja de prueba cuádruple 4 en 1',detail:'Caja con 25 pruebas',price:2850,category:'Pruebas rápidas',icon:'📦',badge:'Oferta'},
-  {id:'p-oximetro-nino',name:'Oxímetro para niño',detail:'Equipo de monitoreo pediátrico',price:180,category:'Equipo médico',icon:'👶'},
-  {id:'p-oximetro-a2',name:'Oxímetro A2',detail:'Medición de saturación de oxígeno',price:100,category:'Equipo médico',icon:'🩺'},
-  {id:'p-oximetro-economico',name:'Oxímetro económico',detail:'Equipo portátil',price:90,category:'Equipo médico',icon:'🫁'},
-  {id:'p-lampara-oidos',name:'Lámpara para oídos',detail:'Equipo de exploración básica',price:100,category:'Equipo médico',icon:'🔦'},
   {id:'p-aciclovir',name:'Aciclovir 400 mg',detail:'Caja con 35 tabletas',price:87.82,category:'Medicamento básico',icon:'💊'},
   {id:'p-ibuprofeno',name:'Ibuprofeno 400 mg',detail:'Caja con 10 tabletas',price:21.62,category:'Medicamento básico',icon:'💊'},
   {id:'p-paracetamol',name:'Paracetamol',detail:'Presentación sujeta a disponibilidad',price:18,category:'Medicamento básico',icon:'💊'},
   {id:'p-amoxicilina',name:'Amoxicilina 500 mg',detail:'Caja con 12 cápsulas',price:22.48,category:'Medicamento básico',icon:'💊'},
-  {id:'p-alcohol',name:'Alcohol desnaturalizado 250 ml',detail:'Uso externo',price:22.41,category:'Material de curación',icon:'🧴'},
-  {id:'p-algodon',name:'Algodón plisado 100 g',detail:'Material de curación',price:27.45,category:'Material de curación',icon:'☁️'},
-  {id:'p-gasa',name:'Gasa esterilizada 10 x 10 cm',detail:'Paquete con 10 sobres',price:19.38,category:'Material de curación',icon:'🩹'},
-  {id:'p-complejo-b',name:'Complejo B',detail:'Caja con 30 tabletas',price:37.81,category:'Vitaminas',icon:'🌿'},
-  {id:'p-suplemento17',name:'Suplemento con 17 vitaminas',detail:'Suplemento alimenticio',price:300,category:'Vitaminas',icon:'🍊'},
-  {id:'p-forxiga',name:'Forxiga',detail:'Presentación sujeta a disponibilidad',price:333,category:'Diabetes',icon:'💙'},
-  {id:'p-trayenta',name:'Trayenta',detail:'Presentación sujeta a disponibilidad',price:333,category:'Diabetes',icon:'💙'},
+
   {id:'p-alprazolam025',name:'Alprazolam 0.25 mg',detail:'Caja con 30 tabletas',price:145,category:'Medicamento especial',icon:'🔒',special:true},
   {id:'p-alprazolam05',name:'Alprazolam 0.50 mg',detail:'Caja con 30 tabletas',price:202,category:'Medicamento especial',icon:'🔒',special:true},
   {id:'p-alprazolam1',name:'Alprazolam 1 mg',detail:'Caja con 30 tabletas',price:174,category:'Medicamento especial',icon:'🔒',special:true},
@@ -39,9 +21,41 @@ const PRODUCTS = [
   {id:'p-itravil',name:'Itravil Clobenzorex 30 mg',detail:'Caja con 60 cápsulas',price:835,category:'Medicamento especial',icon:'🔒',special:true},
   {id:'p-terfarmex',name:'Terfarmex Fentermina 15 mg',detail:'Presentación sujeta a disponibilidad',price:228,category:'Medicamento especial',icon:'🔒',special:true},
   {id:'p-tramadol-para',name:'Tramadol / Paracetamol Alpharma',detail:'Presentación sujeta a disponibilidad',price:75,category:'Medicamento especial',icon:'🔒',special:true},
-  {id:'p-tramadol-gotas',name:'Tramadol en gotas Alpharma',detail:'Presentación sujeta a disponibilidad',price:75,category:'Medicamento especial',icon:'🔒',special:true}
+  {id:'p-tramadol-gotas',name:'Tramadol en gotas Alpharma',detail:'Presentación sujeta a disponibilidad',price:75,category:'Medicamento especial',icon:'🔒',special:true},
+
+  {id:'p-oximetro-nino',name:'Oxímetro para niño',detail:'Equipo de monitoreo pediátrico',price:180,category:'Otros productos',icon:'👶'},
+  {id:'p-oximetro-a2',name:'Oxímetro A2',detail:'Medición de saturación de oxígeno',price:100,category:'Otros productos',icon:'🩺'},
+  {id:'p-oximetro-economico',name:'Oxímetro económico',detail:'Equipo portátil',price:90,category:'Otros productos',icon:'🫁'},
+  {id:'p-dengue',name:'Prueba Dengue Dúo Realy',detail:'Precio por pieza',price:90,category:'Otros productos',icon:'🦟',badge:'Oferta'},
+  {id:'p-covid',name:'Prueba COVID e Influenza Dúo o VIH',detail:'Precio por pieza',price:90,category:'Otros productos',icon:'🦠',badge:'Oferta'},
+  {id:'p-antidoping',name:'Prueba antidoping de 6 parámetros',detail:'Precio por pieza',price:100,category:'Otros productos',icon:'🧪',badge:'Oferta'},
+  {id:'p-triple',name:'Prueba triple Influenza A y B, COVID-19 y Virus Sincitial',detail:'Precio por pieza',price:100,category:'Otros productos',icon:'🧬',badge:'Oferta'},
+  {id:'p-cuadruple',name:'Prueba cuádruple Influenza A y B, COVID-19, Virus Sincitial y Adenovirus',detail:'Precio por pieza',price:120,category:'Otros productos',icon:'🧬',badge:'Oferta'},
+  {id:'p-kn95-negro',name:'Cubrebocas KN95 negros',detail:'Precio por pieza',price:5,category:'Otros productos',icon:'😷'},
+  {id:'p-ttp-infantil',name:'Cubrebocas TTP infantil rosa o blanco',detail:'Caja con 50 piezas',price:60,category:'Otros productos',icon:'😷'},
+  {id:'p-ttp-negro',name:'Cubrebocas TTP negros',detail:'Caja con 50 piezas',price:60,category:'Otros productos',icon:'😷'},
+  {id:'p-kn94',name:'Cubrebocas KN94',detail:'Precio por pieza',price:5,category:'Otros productos',icon:'😷'},
+  {id:'p-tubo-rojo',name:'Tubo rojo',detail:'Caja con 100 piezas',price:220,category:'Otros productos',icon:'🧪'},
+  {id:'p-tubo-lila',name:'Tubo lila',detail:'Caja con 100 piezas',price:280,category:'Otros productos',icon:'🧪'},
+  {id:'p-cofias',name:'Paquete de cofias',detail:'Paquete con 100 piezas',price:160,category:'Otros productos',icon:'🥼'},
+  {id:'p-guantes-nitrilo',name:'Guantes de nitrilo',detail:'Caja',price:160,category:'Otros productos',icon:'🧤'},
+  {id:'p-guantes-esteril',name:'Guantes Ambiderm estériles',detail:'Caja',price:160,category:'Otros productos',icon:'🧤'},
+  {id:'p-baumanometro-escritorio',name:'Baumanómetro de escritorio',detail:'Equipo médico',price:220,category:'Otros productos',icon:'🩺'},
+  {id:'p-baumanometro-pulsera',name:'Baumanómetro de pulsera',detail:'Equipo médico',price:240,category:'Otros productos',icon:'⌚'},
+  {id:'p-termometro-nino',name:'Termómetro para niño',detail:'Equipo médico',price:55,category:'Otros productos',icon:'🌡️'},
+  {id:'p-termometro-mercurio',name:'Termómetro de mercurio',detail:'Equipo médico',price:20,category:'Otros productos',icon:'🌡️'},
+  {id:'p-termometro-pistola',name:'Termómetro tipo pistola',detail:'Equipo médico',price:160,category:'Otros productos',icon:'🌡️'},
+  {id:'p-termometro-digital',name:'Termómetro digital',detail:'Equipo médico',price:25,category:'Otros productos',icon:'🌡️'},
+  {id:'p-nebulizador-azul',name:'Nebulizador azul',detail:'Equipo médico',price:225,category:'Otros productos',icon:'💨'},
+
+  {id:'p-complejo-b',name:'Complejo B',detail:'Caja con 30 tabletas',price:37.81,category:'Vitaminas y suplementos',icon:'🌿'},
+  {id:'p-suplemento17',name:'Suplemento con 17 vitaminas',detail:'Suplemento alimenticio',price:300,category:'Vitaminas y suplementos',icon:'🍊'},
+
+  {id:'p-forxiga',name:'Forxiga',detail:'Promoción: 3 cajas por $1,000.00',price:1000,category:'Diabetes',icon:'💙',badge:'3 por $1,000'},
+  {id:'p-trayenta',name:'Trayenta',detail:'Promoción: 3 cajas por $1,000.00',price:1000,category:'Diabetes',icon:'💙',badge:'3 por $1,000'}
 ];
 
+const LIST_CATEGORIES = new Set(['Medicamento básico','Medicamento especial']);
 const state={cart:JSON.parse(localStorage.getItem('elbambino-cart')||'{}'),category:'Todos',query:'',offer:0};
 const $=s=>document.querySelector(s);const $$=s=>[...document.querySelectorAll(s)];
 const money=value=>new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(value);
@@ -52,16 +66,39 @@ function populateCategories(){
   [...new Set(PRODUCTS.map(p=>p.category))].sort().forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;select.appendChild(o)});
 }
 
+function productMatches(p,q){
+  return !q || `${p.name} ${p.detail} ${p.category}`.toLowerCase().includes(q);
+}
+
 function renderProducts(){
   const grid=$('#productGrid');
   const q=state.query.trim().toLowerCase();
-  const list=PRODUCTS.filter(p=>(state.category==='Todos'||p.category===state.category)&&(!q||`${p.name} ${p.detail} ${p.category}`.toLowerCase().includes(q)));
-  grid.innerHTML=list.map(p=>`<article class="product-card ${p.special?'special-card':''}">
-    <span class="product-badge ${p.special?'special-badge':''}">${p.special?'Medicamento especial':(p.badge||p.category)}</span>
-    <div class="product-visual">${p.icon}</div>
-    <div class="product-body"><span class="product-category">${p.category}</span><h3>${p.name}</h3><p class="product-detail">${p.detail}</p><div class="product-price">${money(p.price)}</div><div class="estimated">Precio estimado; puede variar al llegar desde almacén.</div>
-    <div class="product-actions"><button class="btn ${p.special?'btn-special':'btn-primary'} add-product" data-product-id="${p.id}">${p.special?'Solicitar (cuento con receta)':'Agregar al carrito'}</button><input class="qty-input" data-qty-for="${p.id}" type="number" value="1" min="1" max="99" aria-label="Cantidad"></div></div>
-  </article>`).join('');
+  const list=PRODUCTS.filter(p=>(state.category==='Todos'||p.category===state.category)&&productMatches(p,q));
+  const useList = LIST_CATEGORIES.has(state.category);
+  grid.classList.toggle('catalog-list-mode', useList);
+
+  if(useList){
+    const warning = state.category==='Medicamento especial'
+      ? '<div class="special-list-notice">🔒 Disponibilidad sujeta a validación. Solicitud únicamente para clientes que cuentan con receta.</div>'
+      : '';
+    grid.innerHTML = warning + `<div class="catalog-table-wrap"><table class="catalog-table">
+      <thead><tr><th>Producto</th><th>Presentación</th><th>Precio estimado</th><th>Cantidad</th><th>Acción</th></tr></thead>
+      <tbody>${list.map(p=>`<tr>
+        <td><strong>${p.name}</strong></td>
+        <td>${p.detail}</td>
+        <td><strong>${money(p.price)}</strong></td>
+        <td><input class="qty-input" data-qty-for="${p.id}" type="number" value="1" min="1" max="99" aria-label="Cantidad"></td>
+        <td><button class="btn ${p.special?'btn-special':'btn-primary'} add-product" data-product-id="${p.id}">${p.special?'Solicitar (cuento con receta)':'Agregar al carrito'}</button></td>
+      </tr>`).join('')}</tbody></table></div>`;
+  }else{
+    grid.innerHTML=list.map(p=>`<article class="product-card ${p.special?'special-card':''}">
+      <span class="product-badge ${p.special?'special-badge':''}">${p.special?'Medicamento especial':(p.badge||p.category)}</span>
+      <div class="product-visual">${p.icon}</div>
+      <div class="product-body"><span class="product-category">${p.category}</span><h3>${p.name}</h3><p class="product-detail">${p.detail}</p><div class="product-price">${money(p.price)}</div><div class="estimated">Precio estimado; puede variar al llegar desde almacén.</div>
+      <div class="product-actions"><button class="btn ${p.special?'btn-special':'btn-primary'} add-product" data-product-id="${p.id}">${p.special?'Solicitar (cuento con receta)':'Agregar al carrito'}</button><input class="qty-input" data-qty-for="${p.id}" type="number" value="1" min="1" max="99" aria-label="Cantidad"></div></div>
+    </article>`).join('');
+  }
+
   $('#emptyState').hidden=list.length>0;
   $$('.add-product').forEach(b=>b.addEventListener('click',()=>addToCart(b.dataset.productId,Number(document.querySelector(`[data-qty-for="${b.dataset.productId}"]`).value)||1)));
 }
@@ -95,13 +132,97 @@ function setupSearch(){
   input.addEventListener('input',update);$('#searchButton').onclick=()=>{update();document.querySelector('#productos').scrollIntoView()};document.addEventListener('click',e=>{if(!e.target.closest('.search-wrap'))suggestions.hidden=true});
 }
 
+
+function buildOrderPdf(order){
+  if(!window.jspdf || !window.jspdf.jsPDF) return null;
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:'mm',format:'a4'});
+  const left=15; let y=16;
+  const addLine=(label,value)=>{
+    doc.setFont('helvetica','bold'); doc.text(`${label}:`,left,y);
+    doc.setFont('helvetica','normal');
+    const lines=doc.splitTextToSize(String(value||''),145);
+    doc.text(lines,left+38,y);
+    y+=Math.max(7,lines.length*6);
+  };
+  doc.setFont('helvetica','bold'); doc.setFontSize(18);
+  doc.text('EL BAMBINO DANIEL',left,y); y+=8;
+  doc.setFontSize(12); doc.setFont('helvetica','normal');
+  doc.text('Pedido generado desde elbambinodaniel.com',left,y); y+=10;
+  addLine('Folio',order.folio);
+  addLine('Fecha',new Date(order.fecha).toLocaleString('es-MX'));
+  addLine('Cliente',order.cliente.nombre);
+  addLine('Teléfono',order.cliente.telefono);
+  addLine('Domicilio',order.cliente.domicilio);
+  addLine('Colonia',order.cliente.colonia);
+  addLine('Ciudad',`${order.cliente.ciudad}, ${order.cliente.estado}, C.P. ${order.cliente.cp}`);
+  addLine('Horario',order.cliente.horario);
+  addLine('Cierra al mediodía',order.cliente.cierra);
+  addLine('Forma de pago',order.cliente.pago);
+  addLine('Observaciones',order.cliente.observaciones||'Sin observaciones');
+  y+=3;
+  doc.setFont('helvetica','bold'); doc.text('Productos',left,y); y+=7;
+  doc.setFont('helvetica','normal');
+  order.productos.forEach((p,i)=>{
+    const line=`${i+1}. ${p.nombre} | Cantidad: ${p.cantidad} | Precio estimado: ${money(p.precioEstimado)} | Importe: ${money(p.precioEstimado*p.cantidad)}`;
+    const lines=doc.splitTextToSize(line,180);
+    if(y+lines.length*6>280){doc.addPage();y=16}
+    doc.text(lines,left,y); y+=lines.length*6+2;
+  });
+  y+=3;
+  doc.setFont('helvetica','bold');
+  doc.text(`Total estimado: ${money(order.subtotalEstimado)}`,left,y); y+=8;
+  doc.setFont('helvetica','normal'); doc.setFontSize(10);
+  doc.text(doc.splitTextToSize(order.avisoPrecio,180),left,y);
+  return doc;
+}
+
+async function sendOrderAutomatically(order){
+  const apiUrl=(window.ORDER_API_URL||'').trim();
+  if(!apiUrl){
+    const pdf=buildOrderPdf(order);
+    if(pdf) pdf.save(`${order.folio}.pdf`);
+    return {sent:false,reason:'API_NOT_CONFIGURED'};
+  }
+  const response=await fetch(apiUrl,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(order)
+  });
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok) throw new Error(data.error||'No fue posible enviar el pedido.');
+  return data;
+}
+
 function setupCheckout(){
   $('#checkoutButton').onclick=()=>{if(!cartEntries().length)return;closePanel('cartDrawer');setTimeout(()=>openPanel('checkoutDrawer'),340)};
-  $('#checkoutForm').addEventListener('submit',e=>{
-    e.preventDefault();const data=Object.fromEntries(new FormData(e.currentTarget).entries());const items=cartEntries();const subtotal=items.reduce((s,x)=>s+x.product.price*x.qty,0);const folio=`EBD-${new Date().toISOString().slice(0,10).replaceAll('-','')}-${Math.random().toString(36).slice(2,7).toUpperCase()}`;
-    const order={folio,fecha:new Date().toISOString(),cliente:data,productos:items.map(x=>({id:x.product.id,nombre:x.product.name,cantidad:x.qty,precioEstimado:x.product.price})),subtotalEstimado:subtotal,estado:'Pedido recibido',avisoPrecio:'El precio final se confirma cuando el producto llega desde almacén.'};
-    const orders=JSON.parse(localStorage.getItem('elbambino-orders')||'[]');orders.unshift(order);localStorage.setItem('elbambino-orders',JSON.stringify(orders));
-    closePanel('checkoutDrawer');state.cart={};saveCart();renderCart();e.currentTarget.reset();setTimeout(()=>{$('#overlay').hidden=false;$('#successModal').hidden=false;$('#orderNumber').textContent=folio},340);
+  $('#checkoutForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const submitButton=e.currentTarget.querySelector('button[type="submit"]');
+    submitButton.disabled=true; submitButton.textContent='ENVIANDO PEDIDO...';
+    try{
+      const data=Object.fromEntries(new FormData(e.currentTarget).entries());
+      const items=cartEntries();
+      const subtotal=items.reduce((s,x)=>s+x.product.price*x.qty,0);
+      const folio=`EBD-${new Date().toISOString().slice(0,10).replaceAll('-','')}-${Math.random().toString(36).slice(2,7).toUpperCase()}`;
+      const order={folio,fecha:new Date().toISOString(),cliente:data,productos:items.map(x=>({id:x.product.id,nombre:x.product.name,cantidad:x.qty,precioEstimado:x.product.price})),subtotalEstimado:subtotal,estado:'Pedido recibido',avisoPrecio:'El precio final se confirma cuando el producto llega desde almacén.'};
+      const result=await sendOrderAutomatically(order);
+      const orders=JSON.parse(localStorage.getItem('elbambino-orders')||'[]');orders.unshift(order);localStorage.setItem('elbambino-orders',JSON.stringify(orders));
+      closePanel('checkoutDrawer');state.cart={};saveCart();renderCart();e.currentTarget.reset();
+      setTimeout(()=>{
+        $('#overlay').hidden=false;$('#successModal').hidden=false;$('#orderNumber').textContent=folio;
+        const msg=$('#successModal p');
+        if(result.sent===false){
+          msg.textContent='El pedido y su PDF fueron generados. La conexión automática de WhatsApp todavía requiere activar el servidor privado.';
+        }else{
+          msg.textContent='El pedido fue enviado automáticamente y quedó registrado con su folio.';
+        }
+      },340);
+    }catch(error){
+      alert(`No fue posible enviar el pedido automáticamente. ${error.message}`);
+    }finally{
+      submitButton.disabled=false; submitButton.textContent='CONFIRMAR PEDIDO';
+    }
   });
 }
 
