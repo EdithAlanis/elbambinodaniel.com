@@ -197,34 +197,39 @@ function buildOrderPdf(order){
 async function sendOrderAutomatically(order){
   const apiUrl=(window.ORDER_API_URL||'').trim().replace(/\/$/,'');
   if(!apiUrl){
-    const pdf=buildOrderPdf(order);
-    if(pdf) pdf.save(`${order.folio}.pdf`);
-    const phone=(window.EL_BAMBINO_WHATSAPP||'523331191167').replace(/\D/g,'');
-    const products=(order.productos||[]).map(p=>`• ${p.nombre} x ${p.cantidad}`).join('\n');
-    const text=[
-      'NUEVO PEDIDO EN ELBAMBINODANIEL.COM',
-      `Folio: ${order.folio}`,
-      `Cliente: ${order.cliente.nombre}`,
-      `Teléfono: ${order.cliente.telefono}`,
-      `Domicilio: ${order.cliente.domicilio}, ${order.cliente.colonia}, ${order.cliente.ciudad}, ${order.cliente.estado}, C.P. ${order.cliente.cp}`,
-      `Horario: ${order.cliente.horario}`,
-      `Cierra al mediodía: ${order.cliente.cierra}`,
-      `Pago: ${order.cliente.pago}`,
-      '',
-      'Productos:',
-      products,
-      '',
-      `Total estimado: ${money(order.subtotalEstimado)}`,
-      `Observaciones: ${order.cliente.observaciones||'Sin observaciones'}`
-    ].join('\n');
-    window.location.href=`https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
-    return {sent:true,local:true};
+    throw new Error('El servidor de pedidos no está configurado.');
   }
+
+  const closesMiddayValue=String(order.cliente.cierra||'').toLowerCase();
+  const payload={
+    customerName:order.cliente.nombre||'',
+    phone:order.cliente.telefono||'',
+    address:order.cliente.domicilio||'',
+    neighborhood:order.cliente.colonia||'',
+    city:order.cliente.ciudad||'',
+    state:order.cliente.estado||'',
+    businessHours:order.cliente.horario||'',
+    closesMidday:['sí','si','yes','true','1'].includes(closesMiddayValue),
+    paymentMethod:order.cliente.pago||'Pagar al recibir',
+    items:(order.productos||[]).map(p=>({
+      id:p.id,
+      name:p.nombre,
+      nombre:p.nombre,
+      quantity:Number(p.cantidad||1),
+      cantidad:Number(p.cantidad||1),
+      price:Number(p.precioEstimado||0),
+      precio:Number(p.precioEstimado||0)
+    })),
+    total:Number(order.subtotalEstimado||0),
+    notes:order.cliente.observaciones||''
+  };
+
   const response=await fetch(`${apiUrl}/api/orders`,{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(order)
+    body:JSON.stringify(payload)
   });
+
   const data=await response.json().catch(()=>({}));
   if(!response.ok) throw new Error(data.error||'No fue posible enviar el pedido.');
   return data;
@@ -243,16 +248,13 @@ function setupCheckout(){
       const folio=`EBD-${new Date().toISOString().slice(0,10).replaceAll('-','')}-${Math.random().toString(36).slice(2,7).toUpperCase()}`;
       const order={folio,fecha:new Date().toISOString(),status:'pending',cliente:data,productos:items.map(x=>({id:x.product.id,nombre:x.product.name,cantidad:x.qty,precioEstimado:x.product.price})),subtotalEstimado:subtotal,estado:'Pedido recibido',avisoPrecio:'El precio final se confirma cuando el producto llega desde almacén.'};
       const result=await sendOrderAutomatically(order);
+      if(result.orderNumber) order.folio=result.orderNumber;
       const orders=JSON.parse(localStorage.getItem('elbambino-orders')||'[]');orders.unshift(order);localStorage.setItem('elbambino-orders',JSON.stringify(orders));
       closePanel('checkoutDrawer');state.cart={};saveCart();renderCart();e.currentTarget.reset();
       setTimeout(()=>{
-        $('#overlay').hidden=false;$('#successModal').hidden=false;$('#orderNumber').textContent=folio;
+        $('#overlay').hidden=false;$('#successModal').hidden=false;$('#orderNumber').textContent=order.folio;
         const msg=$('#successModal p');
-        if(result.sent===false){
-          msg.textContent='El pedido quedó registrado. Se abrió WhatsApp con la información; presione Enviar para confirmar el aviso.';
-        }else{
-          msg.textContent='El pedido fue enviado automáticamente y quedó registrado con su folio.';
-        }
+        msg.textContent='El pedido fue enviado automáticamente y quedó registrado con su folio.';
       },340);
     }catch(error){
       alert(`No fue posible enviar el pedido automáticamente. ${error.message}`);
@@ -262,84 +264,79 @@ function setupCheckout(){
   });
 }
 
-
-función configuraciónVisitorCounter(){
-  constante llave='elbambino-recuento-de-visitantes';
-  constante clave de sesión='sesión-de-visitante-elbambino';
-  dejar contar=Número(almacenamiento local.obtener artículo(llave)||0);
-  si(!sesiónAlmacenamiento.obtener artículo(clave de sesión)){
-    contar+=1;
-    almacenamiento local.establecer artículo(llave,Cadena(contar));
-    sesiónAlmacenamiento.establecer artículo(clave de sesión,'1');
+function setupVisitorCounter(){
+  const key='elbambino-visitor-count';
+  const sessionKey='elbambino-visitor-session';
+  let count=Number(localStorage.getItem(key)||0);
+  if(!sessionStorage.getItem(sessionKey)){
+    count+=1;
+    localStorage.setItem(key,String(count));
+    sessionStorage.setItem(sessionKey,'1');
   }
-  constante el=documento.obtenerElementoPorId('visitanteCount');
-  si(el) el.contenido de texto=nuevo Internacional.Formato de número('es-MX').formato(contar);
+  const el=document.getElementById('visitorCount');
+  if(el) el.textContent=new Intl.NumberFormat('es-MX').format(count);
 }
 
-función calor(){
-  poblarCategorías();renderProductos();renderCarrito();configuraciónOfertas();configuraciónBuscar();configuraciónPagar();configuraciónVisitorCounter();
-  $('#filtrocategoría').en cambio=y=>{estado.categoría=y.objetivo.valor;estado.página=1;renderProductos()};
-  $$('.tarjeta-categoría').para cada uno(b=>b.al hacer clic=()=>{estado.categoría=b.conjunto de datos.categoría;estado.página=1;$('#filtrocategoría').valor=estado.categoría;renderProductos();documento.selector de consulta('#productos').desplazarse hacia la vista()});
-  $$('.agregación rápida').para cada uno(b=>b.al hacer clic=()=>añadir a la cesta(b.conjunto de datos.ID de producto,1));
-  $('#botóncarro').al hacer clic=()=>panel abierto('cajón del carrito');
-  $$('[cierre de datos]').para cada uno(b=>b.al hacer clic=()=>{constante identificación=b.conjunto de datos.cerca;documento.obtenerElementoPorId(identificación).lista de clases.contiene('cajón')?cerrarPanel(identificación):cerrarModal(identificación)});
-  $('#cubrir').al hacer clic=()=>{$$('.drawer.open').para cada uno(d=>cerrarPanel(d.identificación));si(!$('#éxitoModal').oculto)cerrarModal('éxitoModal')};
-  documento.agregarEventListener('pulsación de tecla',y=>{si(y.llave==='Escapar'){$$('.drawer.open').para cada uno(d=>cerrarPanel(d.identificación));si(!$('#éxitoModal').oculto)cerrarModal('éxitoModal')}});
-}
+function init(){
+  populateCategories();
+  renderProducts();
+  renderCart();
+  setupOffers();
+  setupSearch();
+  setupCheckout();
+  setupVisitorCounter();
 
-documento.agregarEventListener('DOMContenidoCargado',calor);
+  const categoryFilter=$('#categoryFilter');
+  if(categoryFilter){
+    categoryFilter.onchange=e=>{
+      state.category=e.target.value;
+      state.page=1;
+      renderProducts();
+    };
+  }
 
-asíncrono función enviarPedido(orden){
-  constante URL de API=(ventana.ORDER_API_URL||'').reemplazar(/\/$/,'');
-  constante teléfono=(ventana.EL_BAMBINO_WHATSAPP||'523331191167').reemplazar(/\D/g,'');
-  constante productos=(orden.productos||[]).mapa(pag=>`• ${pag.nombre} incógnita ${pag.cantidad}`).unirse('\norte');
-  constante texto=[
-    'NUEVO PEDIDO EN ELBAMBINODANIEL.COM',
-    `Folio: ${orden.folio}`,
-    `Cliente: ${orden.cliente.nombre}`,
-    `Teléfono: ${orden.cliente.teléfono}`,
-    `Domicilio: ${orden.cliente.domicilio}, ${orden.cliente.colonia}, ${orden.cliente.ciudad}, ${orden.cliente.estado}, C.P. ${orden.cliente.CP}`,
-    `Horario: ${orden.cliente.horario}`,
-    `Cierra al mediodía: ${orden.cliente.cierra}`,
-    `Pago: ${orden.cliente.pago}`,
-    '',
-    'Productos:',
-    productos,
-    '',
-    `Total estimado: ${dinero(orden.subtotalEstimado)}`,
-    `Observaciones: ${orden.cliente.observaciones||'Sin observaciones'}`
-  ].unirse('\norte');
+  $$('.category-card').forEach(button=>{
+    button.onclick=()=>{
+      state.category=button.dataset.category;
+      state.page=1;
+      if(categoryFilter) categoryFilter.value=state.category;
+      renderProducts();
+      document.querySelector('#productos')?.scrollIntoView();
+    };
+  });
 
-  si(URL de API && !URL de API.incluye('TU-SERVIDOR')){
-    constante respuesta=esperar buscar(`${URL de API}/api/orders`,{
-      método:'CORREO',
-      encabezados:{'Tipo de contenido':'aplicación/json'},
-      cuerpo:JSON.encadenar(orden)
-    });
-    si(!respuesta.OK){
-      constante datos=esperar respuesta.json().atrapar(()=>({}));
-      tirar nuevo Error(datos.error||'No fue posible guardar el pedido.');
+  $$('.quick-add').forEach(button=>{
+    button.onclick=()=>addToCart(button.dataset.productId,1);
+  });
+
+  const cartButton=$('#cartButton');
+  if(cartButton) cartButton.onclick=()=>openPanel('cartDrawer');
+
+  $$('[data-close]').forEach(button=>{
+    button.onclick=()=>{
+      const id=button.dataset.close;
+      const element=document.getElementById(id);
+      if(!element) return;
+      element.classList.contains('drawer') ? closePanel(id) : closeModal(id);
+    };
+  });
+
+  const overlay=$('#overlay');
+  if(overlay){
+    overlay.onclick=()=>{
+      $$('.drawer.open').forEach(drawer=>closePanel(drawer.id));
+      const successModal=$('#successModal');
+      if(successModal && !successModal.hidden) closeModal('successModal');
+    };
+  }
+
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape'){
+      $$('.drawer.open').forEach(drawer=>closePanel(drawer.id));
+      const successModal=$('#successModal');
+      if(successModal && !successModal.hidden) closeModal('successModal');
     }
-  }demás{
-    constante pedidos=JSON.analizar gramaticalmente(almacenamiento local.obtener artículo('órdenes-elbambino')||'[]');
-    pedidos.desacelerar(orden);
-    almacenamiento local.establecer artículo('órdenes-elbambino',JSON.encadenar(pedidos));
-  }
-
-  constante pdf=construirPedidoPdf(orden);
-  si(pdf) pdf.ahorrar(`${orden.folio}.pdf`);
-  ventana.ubicación.href=`https://wa.me/${teléfono}?texto=${codificarURIComponente(texto)}`;
-  devolver {enviado:verdadero};
+  });
 }
 
-asíncrono función registrarseGlobalVisita(){
-  constante URL de API=(ventana.ORDER_API_URL||'').reemplazar(/\/$/,'');
-  si(!URL de API || URL de API.incluye('TU-SERVIDOR')) devolver;
-  intentar{
-    constante r=esperar buscar(`${URL de API}/api/visitas`,{método:'CORREO'});
-    constante datos=esperar r.json();
-    constante el=documento.obtenerElementoPorId('visitanteCount');
-    si(el && datos.total!=nulo) el.contenido de texto=nuevo Internacional.Formato de número('es-MX').formato(datos.total);
-  }atrapar(_){}
-}
-documento.agregarEventListener('DOMContenidoCargado',registrarseGlobalVisita);
+document.addEventListener('DOMContentLoaded',init);
