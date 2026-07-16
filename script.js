@@ -1,8 +1,4 @@
-const PRODUCTS = [
-  {id:'p-aciclovir',name:'Aciclovir 400 mg',detail:'Caja con 35 tabletas',price:87.82,category:'Medicamento básico',icon:'💊'},
-  {id:'p-ibuprofeno',name:'Ibuprofeno 400 mg',detail:'Caja con 10 tabletas',price:21.62,category:'Medicamento básico',icon:'💊'},
-  {id:'p-paracetamol',name:'Paracetamol',detail:'Presentación sujeta a disponibilidad',price:18,category:'Medicamento básico',icon:'💊'},
-  {id:'p-amoxicilina',name:'Amoxicilina 500 mg',detail:'Caja con 12 cápsulas',price:22.48,category:'Medicamento básico',icon:'💊'},
+const PRODUCTS = [...(window.BASIC_PRODUCTS||[]),
 
   {id:'p-alprazolam025',name:'Alprazolam 0.25 mg',detail:'Caja con 30 tabletas',price:145,category:'Medicamento especial',icon:'🔒',special:true},
   {id:'p-alprazolam05',name:'Alprazolam 0.50 mg',detail:'Caja con 30 tabletas',price:202,category:'Medicamento especial',icon:'🔒',special:true},
@@ -60,7 +56,7 @@ const PRODUCTS = [
 ];
 
 const LIST_CATEGORIES = new Set(['Medicamento básico','Medicamento especial']);
-const state={cart:JSON.parse(localStorage.getItem('elbambino-cart')||'{}'),category:'Todos',query:'',offer:0};
+const state={cart:JSON.parse(localStorage.getItem('elbambino-cart')||'{}'),category:'Todos',query:'',offer:0,page:1,pageSize:75};
 const $=s=>document.querySelector(s);const $$=s=>[...document.querySelectorAll(s)];
 const money=value=>new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(value);
 const saveCart=()=>localStorage.setItem('elbambino-cart',JSON.stringify(state.cart));
@@ -77,7 +73,11 @@ function productMatches(p,q){
 function renderProducts(){
   const grid=$('#productGrid');
   const q=state.query.trim().toLowerCase();
-  const list=PRODUCTS.filter(p=>(state.category==='Todos'||p.category===state.category)&&productMatches(p,q));
+  const allMatches=PRODUCTS.filter(p=>(state.category==='Todos'||p.category===state.category)&&productMatches(p,q));
+  const usePaging=state.category==='Medicamento básico';
+  const totalPages=Math.max(1,Math.ceil(allMatches.length/state.pageSize));
+  if(state.page>totalPages) state.page=totalPages;
+  const list=usePaging?allMatches.slice((state.page-1)*state.pageSize,state.page*state.pageSize):allMatches;
   const useList = LIST_CATEGORIES.has(state.category);
   grid.classList.toggle('catalog-list-mode', useList);
 
@@ -93,7 +93,8 @@ function renderProducts(){
         <td><strong>${money(p.price)}</strong></td>
         <td><input class="qty-input" data-qty-for="${p.id}" type="number" value="1" min="1" max="99" aria-label="Cantidad"></td>
         <td><button class="btn ${p.special?'btn-special':'btn-primary'} add-product" data-product-id="${p.id}">${p.special?'Solicitar (cuento con receta)':'Agregar al carrito'}</button></td>
-      </tr>`).join('')}</tbody></table></div>`;
+      </tr>`).join('')}</tbody></table></div>` +
+      (usePaging?`<div class="catalog-pagination"><button id="prevCatalogPage" type="button" ${state.page<=1?'disabled':''}>← Anterior</button><span>Página ${state.page} de ${totalPages} · ${allMatches.length} productos</span><button id="nextCatalogPage" type="button" ${state.page>=totalPages?'disabled':''}>Siguiente →</button></div>`:'');
   }else{
     grid.innerHTML=list.map(p=>`<article class="product-card ${p.special?'special-card':''}">
       <span class="product-badge ${p.special?'special-badge':''}">${p.special?'Medicamento especial':(p.badge||p.category)}</span>
@@ -105,6 +106,9 @@ function renderProducts(){
 
   $('#emptyState').hidden=list.length>0;
   $$('.add-product').forEach(b=>b.addEventListener('click',()=>addToCart(b.dataset.productId,Number(document.querySelector(`[data-qty-for="${b.dataset.productId}"]`).value)||1)));
+  const prev=$('#prevCatalogPage');const next=$('#nextCatalogPage');
+  if(prev)prev.onclick=()=>{state.page--;renderProducts();document.querySelector('#productos').scrollIntoView()};
+  if(next)next.onclick=()=>{state.page++;renderProducts();document.querySelector('#productos').scrollIntoView()};
 }
 
 function addToCart(id,qty=1){state.cart[id]=(state.cart[id]||0)+qty;saveCart();renderCart();openPanel('cartDrawer')}
@@ -132,7 +136,7 @@ function setupOffers(){
 
 function setupSearch(){
   const input=$('#searchInput');const suggestions=$('#searchSuggestions');
-  const update=()=>{state.query=input.value;renderProducts();const q=input.value.trim().toLowerCase();if(!q){suggestions.hidden=true;return}const hits=PRODUCTS.filter(p=>`${p.name} ${p.category}`.toLowerCase().includes(q)).slice(0,7);suggestions.innerHTML=hits.map(p=>`<button type="button" data-suggest="${p.id}"><span>${p.name}</span><strong>${money(p.price)}</strong></button>`).join('');suggestions.hidden=!hits.length;$$('[data-suggest]').forEach(b=>b.onclick=()=>{const p=PRODUCTS.find(x=>x.id===b.dataset.suggest);input.value=p.name;state.query=p.name;state.category='Todos';$('#categoryFilter').value='Todos';renderProducts();suggestions.hidden=true;document.querySelector('#productos').scrollIntoView()})};
+  const update=()=>{state.query=input.value;state.page=1;renderProducts();const q=input.value.trim().toLowerCase();if(!q){suggestions.hidden=true;return}const hits=PRODUCTS.filter(p=>`${p.name} ${p.category}`.toLowerCase().includes(q)).slice(0,7);suggestions.innerHTML=hits.map(p=>`<button type="button" data-suggest="${p.id}"><span>${p.name}</span><strong>${money(p.price)}</strong></button>`).join('');suggestions.hidden=!hits.length;$$('[data-suggest]').forEach(b=>b.onclick=()=>{const p=PRODUCTS.find(x=>x.id===b.dataset.suggest);input.value=p.name;state.query=p.name;state.category='Todos';$('#categoryFilter').value='Todos';renderProducts();suggestions.hidden=true;document.querySelector('#productos').scrollIntoView()})};
   input.addEventListener('input',update);$('#searchButton').onclick=()=>{update();document.querySelector('#productos').scrollIntoView()};document.addEventListener('click',e=>{if(!e.target.closest('.search-wrap'))suggestions.hidden=true});
 }
 
@@ -232,8 +236,8 @@ function setupCheckout(){
 
 function init(){
   populateCategories();renderProducts();renderCart();setupOffers();setupSearch();setupCheckout();
-  $('#categoryFilter').onchange=e=>{state.category=e.target.value;renderProducts()};
-  $$('.category-card').forEach(b=>b.onclick=()=>{state.category=b.dataset.category;$('#categoryFilter').value=state.category;renderProducts();document.querySelector('#productos').scrollIntoView()});
+  $('#categoryFilter').onchange=e=>{state.category=e.target.value;state.page=1;renderProducts()};
+  $$('.category-card').forEach(b=>b.onclick=()=>{state.category=b.dataset.category;state.page=1;$('#categoryFilter').value=state.category;renderProducts();document.querySelector('#productos').scrollIntoView()});
   $$('.quick-add').forEach(b=>b.onclick=()=>addToCart(b.dataset.productId,1));
   $('#cartButton').onclick=()=>openPanel('cartDrawer');
   $$('[data-close]').forEach(b=>b.onclick=()=>{const id=b.dataset.close;document.getElementById(id).classList.contains('drawer')?closePanel(id):closeModal(id)});
