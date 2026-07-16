@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="El Bambino Daniel: medicamentos, pruebas rápidas, equipo médico, productos para bebé y cuidado de la salud.">
+  <meta name="theme-color" content="#102f65">
+  <title>El Bambino Daniel | Tienda en línea</title>
+  <link rel="icon" href="assets/images/logo-el-bambino-daniel.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="top-strip" aria-label="Información importante">
+    <span>🚚 Entrega a domicilio</span>
+    <span>💵 Al recibir: efectivo o transferencia</span>
+    <span>💊 Precios estimados sujetos a actualización</span>
+  </div>
+
+  <header class="site-header">
+    <a class="brand" href="#inicio" aria-label="Ir al inicio">
+      <img src="assets/images/logo-el-bambino-daniel.png" alt="El Bambino Daniel">
+      <div>
+        <strong>EL BAMBINO DANIEL</strong>
+        <small>Tu salud, nuestra prioridad</small>
+      </div>
+    </a>
+
+    <div class="search-wrap">
+      <input id="searchInput" type="search" placeholder="Buscar medicamento, prueba o producto..." autocomplete="off">
+      <button id="searchButton" type="button" aria-label="Buscar">⌕</button>
+      <div id="searchSuggestions" class="search-suggestions" hidden></div>
+    </div>
+
+    <button id="cartButton" class="cart-button" type="button" aria-label="Abrir carrito">
+      <span>🛒</span>
+      <strong>Carrito</strong>
+      <b id="cartCount">0</b>
+    </button>
+  </header>
+
+  <nav class="main-nav" aria-label="Navegación principal">
+    <a href="#inicio">Inicio</a>
+    <a href="#categorias">Categorías</a>
+    <a href="#ofertas">Ofertas</a>
+    <a href="#productos">Productos</a>
+    <a href="#especiales">Medicamento especial</a>
+    <a href="#pedido">Cómo pedir</a>
+  </nav>
+
+  <main id="inicio">
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">Tienda en línea oficial</span>
+        <h1>Todo para tu salud y la de tu familia</h1>
+        <p>Medicamentos, pruebas rápidas, equipo médico, productos para bebé y artículos para el cuidado diario.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#ofertas">Ver ofertas</a>
+          <a class="btn btn-light" href="#productos">Explorar productos</a>
+        </div>
+        <div class="hero-badges">
+          <span>✓ Atención personalizada</span>
+          <span>✓ Compra sencilla</span>
+          <span>✓ Entrega coordinada</span>
+        </div>
+      </div>
+      <div class="hero-logo-card">
+        <img src="assets/images/logo-el-bambino-daniel.png" alt="Logotipo de El Bambino Daniel">
+      </div>
+    </section>
+
+    <section class="price-notice" role="note">
+      <div class="notice-icon">ⓘ</div>
+      <div>
+        <strong>Información sobre precios</strong>
+        <p>El precio mostrado es estimado y puede variar. El precio final se confirma cuando el producto llega a nuestras instalaciones desde el almacén.</p>
+      </div>
+    </section>
+
+    <section id="ofertas" class="section-shell">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Promociones vigentes</span>
+          <h2>Ofertas destacadas</h2>
+        </div>
+        <div class="slider-controls">
+          <button id="prevOffer" type="button" aria-label="Oferta anterior">←</button>
+          <button id="nextOffer" type="button" aria-label="Oferta siguiente">→</button>
+        </div>
+      </div>
+
+      <div class="offer-slider" id="offerSlider">
+        <article class="offer-slide active">
+          <img src="assets/images/oferta-antidoping.jpg" alt="Oferta prueba antidoping de 6 parámetros">
+          <div class="offer-overlay"><button class="btn btn-primary quick-add" data-product-id="p-antidoping">Agregar al carrito</button></div>
+        </article>
+        <article class="offer-slide">
+          <img src="assets/images/oferta-dengue.jpg" alt="Oferta prueba rápida Dengue Dúo">
+          <div class="offer-overlay"><button class="btn btn-primary quick-add" data-product-id="p-dengue">Agregar al carrito</button></div>
+        </article>
+        <article class="offer-slide">
+          <img src="assets/images/oferta-covid-influenza.jpg" alt="Oferta prueba rápida COVID e Influenza">
+          <div class="offer-overlay"><button class="btn btn-primary quick-add" data-product-id="p-covid">Agregar al carrito</button></div>
+        </article>
+        <article class="offer-slide">
+          <img src="assets/images/oferta-cuadruple.jpg" alt="Oferta prueba cuádruple rápida 4 en 1">
+          <div class="offer-overlay"><button class="btn btn-primary quick-add" data-product-id="p-cuadruple">Agregar al carrito</button></div>
+        </article>
+      </div>
+      <div class="offer-dots" id="offerDots" aria-label="Cambiar oferta"></div>
+    </section>
+
+    <section id="categorias" class="section-shell">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Encuentra lo que necesitas</span>
+          <h2>Nuestras categorías</h2>
+        </div>
+      </div>
+      <div class="category-grid">
+        <button class="category-card" data-category="Medicamento básico"><span>💊</span><strong>Medicamento básico</strong></button>
+        <button class="category-card special" data-category="Medicamento especial"><span>🔒</span><strong>Medicamento especial</strong></button>
+        <button class="category-card" data-category="Pruebas rápidas"><span>🧪</span><strong>Pruebas rápidas</strong></button>
+        <button class="category-card" data-category="Equipo médico"><span>🩺</span><strong>Equipo médico</strong></button>
+        <button class="category-card" data-category="Material de curación"><span>🩹</span><strong>Material de curación</strong></button>
+        <button class="category-card" data-category="Vitaminas"><span>🌿</span><strong>Vitaminas</strong></button>
+        <button class="category-card" data-category="Bebés"><span>👶</span><strong>Bebés</strong></button>
+        <button class="category-card" data-category="Diabetes"><span>💙</span><strong>Diabetes</strong></button>
+      </div>
+    </section>
+
+    <section id="productos" class="section-shell">
+      <div class="section-heading product-heading">
+        <div>
+          <span class="eyebrow">Catálogo inicial</span>
+          <h2>Productos disponibles</h2>
+        </div>
+        <select id="categoryFilter" aria-label="Filtrar productos por categoría">
+          <option value="Todos">Todas las categorías</option>
+        </select>
+      </div>
+      <div id="productGrid" class="product-grid"></div>
+      <div id="emptyState" class="empty-state" hidden>No encontramos productos con ese criterio.</div>
+    </section>
+
+    <section id="especiales" class="special-section">
+      <div class="section-shell special-inner">
+        <div>
+          <span class="eyebrow light">Manejo diferenciado</span>
+          <h2>Medicamento especial</h2>
+          <p>Los productos de esta sección se solicitan con el botón <strong>“Solicitar (cuento con receta)”</strong>. No se solicita cargar ningún documento en el sitio.</p>
+        </div>
+        <div class="special-callout">🔒 Disponibilidad sujeta a validación</div>
+      </div>
+    </section>
+
+    <section id="pedido" class="section-shell order-how">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Proceso sencillo</span>
+          <h2>¿Cómo funciona tu pedido?</h2>
+        </div>
+      </div>
+      <div class="steps-grid">
+        <article><b>1</b><span>🛒</span><h3>Agrega productos</h3><p>Selecciona productos y cantidades.</p></article>
+        <article><b>2</b><span>📋</span><h3>Captura tus datos</h3><p>Escribe domicilio, horario y teléfono.</p></article>
+        <article><b>3</b><span>✅</span><h3>Confirma el pedido</h3><p>Revisa cuidadosamente toda la información.</p></article>
+        <article><b>4</b><span>🚚</span><h3>Coordinamos la entrega</h3><p>Confirmamos existencias y precio final.</p></article>
+        <article><b>5</b><span>💵</span><h3>Paga al recibir</h3><p>En efectivo o mediante transferencia.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand"><img src="assets/images/logo-el-bambino-daniel.png" alt="El Bambino Daniel"><div><strong>EL BAMBINO DANIEL</strong><span>elbambinodaniel.com</span></div></div>
+      <div><h3>Compra</h3><a href="#ofertas">Ofertas</a><a href="#productos">Productos</a><a href="#especiales">Medicamento especial</a></div>
+      <div><h3>Información</h3><span>Precios estimados</span><span>Pago en efectivo o transferencia</span><span>Entrega coordinada</span></div>
+      <div><h3>Privacidad</h3><span>Los datos se utilizan únicamente para procesar el pedido.</span><span>El número interno de recepción no se muestra en la tienda.</span></div>
+    </div>
+    <div class="footer-bottom">© 1993–2026 El Bambino Daniel. Todos los derechos reservados.</div>
+  </footer>
+
+  <div id="overlay" class="overlay" hidden></div>
+
+  <aside id="cartDrawer" class="drawer" aria-label="Carrito de compras" aria-hidden="true">
+    <div class="drawer-head"><div><span class="eyebrow">Tu selección</span><h2>Mi carrito</h2></div><button class="icon-button" data-close="cartDrawer" aria-label="Cerrar">×</button></div>
+    <div id="cartItems" class="cart-items"></div>
+    <div class="cart-summary">
+      <div><span>Subtotal estimado</span><strong id="cartSubtotal">$0.00</strong></div>
+      <p>El precio final puede variar y se confirma al recibir el producto desde almacén.</p>
+      <button id="checkoutButton" class="btn btn-primary btn-full" type="button">Continuar con mi pedido</button>
+    </div>
+  </aside>
+
+  <section id="checkoutDrawer" class="drawer checkout-drawer" aria-label="Datos del pedido" aria-hidden="true">
+    <div class="drawer-head"><div><span class="eyebrow">Paso final</span><h2>Datos para realizar su pedido</h2></div><button class="icon-button" data-close="checkoutDrawer" aria-label="Cerrar">×</button></div>
+    <div class="capture-reminder">
+      <strong>Antes de comenzar</strong>
+      <p>Revise que sus datos, dirección, teléfono, productos y cantidades sean correctos.</p>
+    </div>
+    <form id="checkoutForm">
+      <label>Nombre completo *<input name="nombre" required autocomplete="name"></label>
+      <label>Teléfono *<input name="telefono" required inputmode="tel" autocomplete="tel"></label>
+      <label>Domicilio donde recibirá el pedido *<textarea name="domicilio" required rows="2" placeholder="Calle, número, interior, entre calles y referencias"></textarea></label>
+      <label>Colonia *<input name="colonia" required></label>
+      <div class="field-row"><label>Ciudad *<input name="ciudad" required></label><label>Estado *<input name="estado" required></label></div>
+      <label>Código Postal *<input name="cp" required inputmode="numeric" maxlength="5"></label>
+      <label>Horario de su establecimiento o domicilio *<input name="horario" required placeholder="Ej. 9:00 a 18:00"></label>
+      <fieldset><legend>¿Cierra al mediodía? *</legend><label class="radio"><input type="radio" name="cierra" value="Sí" required> Sí</label><label class="radio"><input type="radio" name="cierra" value="No"> No</label></fieldset>
+      <label>Observaciones del pedido<textarea name="observaciones" rows="3" placeholder="Opcional"></textarea></label>
+      <fieldset><legend>Forma de pago al recibir *</legend><label class="radio"><input type="radio" name="pago" value="Efectivo" required> Efectivo</label><label class="radio"><input type="radio" name="pago" value="Transferencia"> Transferencia bancaria</label></fieldset>
+      <label class="consent"><input type="checkbox" required> Confirmo que revisé mis datos, productos y cantidades.</label>
+      <div class="final-price-notice"><strong>Precio estimado</strong><span>El importe final se confirma cuando el producto llega desde almacén.</span></div>
+      <button class="btn btn-success btn-full" type="submit">CONFIRMAR PEDIDO</button>
+    </form>
+  </section>
+
+  <section id="successModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="successTitle" hidden>
+    <button class="icon-button modal-close" data-close="successModal" aria-label="Cerrar">×</button>
+    <div class="success-icon">✓</div>
+    <h2 id="successTitle">¡Pedido registrado!</h2>
+    <p>Gracias por confiar en El Bambino Daniel. Revisaremos disponibilidad y precio final para coordinar la entrega.</p>
+    <p class="order-number">Folio: <strong id="orderNumber"></strong></p>
+    <button class="btn btn-primary" data-close="successModal">Regresar a la tienda</button>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
