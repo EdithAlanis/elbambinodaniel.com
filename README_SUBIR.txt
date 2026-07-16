@@ -1,19 +1,25 @@
-EL BAMBINO DANIEL — VERSIÓN FINAL PARA GITHUB PAGES
+EL BAMBINO DANIEL — VERSIÓN CORREGIDA 2
 
-CAMBIOS INCLUIDOS
-- Logo actualizado: Proveedor de farmacias, medicamentos y laboratorios.
-- Logo integrado en la tienda y en el panel de pedidos.
-- Acceso al panel con clave 2222.
-- Pedidos pendientes, histórico y botón Marcar como atendido.
-- PDF del pedido.
-- WhatsApp abre un mensaje completo con el folio y los datos del pedido.
-- Contador visible de ingresos por navegador/sesión.
-- Catálogo completo y ofertas.
+CAMBIOS VISIBLES
+- Franja roja superior: “VERSIÓN CORREGIDA 2 · PEDIDOS Y GUANTES POR TALLA”.
+- Botón rojo “REVISAR PEDIDOS”.
+- Acceso con clave 2222.
+- Categoría independiente “Guantes por talla”.
+- Guantes de nitrilo: chico, mediano y grande.
+- Guantes Ambiderm estériles: chico, mediano y grande.
 
-PARA SUBIR
-Suba todos los archivos de esta carpeta a la raíz del repositorio de GitHub y confirme con Commit changes.
+MUY IMPORTANTE PARA QUE SE VEA EL CAMBIO
+1. Entre al repositorio de GitHub.
+2. Elimine o reemplace los archivos antiguos index.html, script.js, style.css, admin.html, admin.js, admin.css y config.js.
+3. Suba TODOS los archivos de este ZIP a la raíz, no dentro de una carpeta.
+4. Presione Commit changes.
+5. Espere de 1 a 3 minutos.
+6. Abra https://elbambinodaniel.com/?v=2
+7. En computadora presione Ctrl + F5 para borrar la versión anterior de la memoria del navegador.
 
-IMPORTANTE
-En GitHub Pages los pedidos del panel se almacenan en el navegador donde se creó el pedido.
-Los pedidos realizados desde otros teléfonos o computadoras llegarán mediante WhatsApp cuando el cliente presione Enviar, pero no aparecerán todos juntos en el panel hasta conectar un servidor privado.
-El contador incluido evita contar varias veces durante la misma sesión, pero se conserva por navegador; para un contador global real se requiere un servicio externo.
+PEDIDOS
+El panel se abre desde el botón rojo REVISAR PEDIDOS.
+Clave: 2222.
+
+NOTA
+En esta versión estática, el panel muestra pedidos creados en el mismo navegador. Los pedidos de otros celulares se reciben por WhatsApp cuando el cliente presiona Enviar.

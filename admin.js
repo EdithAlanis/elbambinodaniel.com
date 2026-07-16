@@ -116,3 +116,16 @@ $$('.orders-tab').forEach(b=>b.onclick=()=>loadOrders(b.dataset.status));
 $('#closeOrderModal').onclick=()=>$('#orderModal').hidden=true;
 $('#orderModal').onclick=e=>{if(e.target.id==='orderModal')$('#orderModal').hidden=true};
 if(pin()) login(pin()).catch(()=>sessionStorage.removeItem('elbambino-admin-pin'));
+
+
+// Respaldo visible para navegadores con caché o errores previos.
+document.addEventListener('DOMContentLoaded',()=>{
+  const form=document.getElementById('loginForm');
+  const input=document.getElementById('adminPin');
+  const error=document.getElementById('loginError');
+  if(form && !form.dataset.ready){
+    form.dataset.ready='1';
+  }
+  if(input) input.focus();
+  if(error) error.textContent='Clave incorrecta. La clave de acceso es 2222.';
+});
