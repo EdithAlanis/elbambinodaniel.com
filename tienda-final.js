@@ -1,94 +1,452 @@
-(() => {
-  'use strict';
-  const $ = s => document.querySelector(s);
-  const $$ = s => [...document.querySelectorAll(s)];
-  const money = n => new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(Number(n||0));
+const PRODUCTOS = [...(ventana.BASIC_PRODUCTS||[]),
 
-  const extras = [
-    {id:'tramadol-adiol-100',name:'Tramadol cápsulas 100 mg ADIOL',detail:'Caja con 10 cápsulas · Requiere receta médica',price:75,category:'Medicamento especial',special:true},
-    {id:'oximetro-nino',name:'Oxímetro para niño',detail:'Equipo de monitoreo pediátrico',price:180,category:'Otros productos'},
-    {id:'oximetro-a2',name:'Oxímetro A2',detail:'Medición de saturación de oxígeno',price:100,category:'Otros productos'},
-    {id:'oximetro-economico',name:'Oxímetro económico',detail:'Equipo portátil',price:90,category:'Otros productos'},
-    {id:'dengue-duo',name:'Prueba Dengue Dúo',detail:'Prueba rápida',price:90,category:'Pruebas rápidas'},
-    {id:'covid-influenza',name:'Prueba COVID e Influenza Dúo',detail:'Prueba rápida',price:90,category:'Pruebas rápidas'},
-    {id:'antidoping-6',name:'Prueba antidoping 6 parámetros',detail:'Prueba rápida',price:100,category:'Pruebas rápidas'},
-    {id:'triple',name:'Prueba triple Influenza A/B, COVID y VSR',detail:'Prueba rápida',price:100,category:'Pruebas rápidas'},
-    {id:'cuadruple',name:'Prueba cuádruple Influenza A/B, COVID, VSR y Adenovirus',detail:'Prueba rápida',price:120,category:'Pruebas rápidas'}
+  {id:'guante-nitrilo-chico',name:'Guantes de nitrilo talla chica',detail:'Caja, talla chica',price:0,category:'Guantes',icon:'🧤'},
+  {id:'guante-nitrilo-mediano',name:'Guantes de nitrilo talla mediana',detail:'Caja, talla mediana',price:0,category:'Guantes',icon:'🧤'},
+  {id:'guante-nitrilo-grande',name:'Guantes de nitrilo talla grande',detail:'Caja, talla grande',price:0,category:'Guantes',icon:'🧤'},
+  {id:'guante-ambiderm-chico',name:'Guantes Ambiderm estériles talla chica',detail:'Talla chica',price:0,category:'Guantes',icon:'🧤'},
+  {id:'guante-ambiderm-mediano',name:'Guantes Ambiderm estériles talla mediana',detail:'Talla mediana',price:0,category:'Guantes',icon:'🧤'},
+  {id:'guante-ambiderm-grande',name:'Guantes Ambiderm estériles talla grande',detail:'Talla grande',price:0,category:'Guantes',icon:'🧤'},
+
+
+  {id:'p-tramadol-adiolol-100',name:'Tramadol cápsulas 100 mg ADIOL',detail:'Caja con 10 cápsulas · Requiere receta médica',price:75,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-alprazolam025',name:'Alprazolam 0.25 mg',detail:'Caja con 30 tabletas',price:145,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-alprazolam05',name:'Alprazolam 0.50 mg',detail:'Caja con 30 tabletas',price:202,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-alprazolam1',name:'Alprazolam 1 mg',detail:'Caja con 30 tabletas',price:174,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-alprazolam2',name:'Alprazolam 2 mg',detail:'Caja con 30 tabletas',price:283,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-farmapram05',name:'Farmapram 0.50 mg',detail:'Alprazolam, caja con 30 tabletas',price:256,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-farmapram2',name:'Farmapram 2 mg',detail:'Alprazolam, caja con 30 tabletas',price:413,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-bromazepam',name:'Bromazepam 3 mg',detail:'Caja con 30 tabletas',price:180,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-clonazepam-gotas',name:'Clonazepam gotas',detail:'Presentación sujeta a disponibilidad',price:90,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-clonazepam-tabs',name:'Clonazepam tabletas',detail:'Presentación sujeta a disponibilidad',price:90,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-diazepam',name:'Diazepam',detail:'Presentación sujeta a disponibilidad',price:90,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-metilfenidato',name:'Metilfenidato 10 mg',detail:'Caja con 60 tabletas',price:300,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-tradea',name:'Tradea LP 20 mg',detail:'Liberación prolongada, caja con 30 tabletas',price:973,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-axcion',name:'Axcion Fentermina 30 mg',detail:'Caja con 30 tabletas',price:310,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-axcion-ap',name:'Axcion AP Fentermina 30 mg',detail:'Caja con 30 tabletas',price:498,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-itravil',name:'Itravil Clobenzorex 30 mg',detail:'Caja con 60 cápsulas',price:835,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-terfarmex',name:'Terfarmex Fentermina 15 mg',detail:'Presentación sujeta a disponibilidad',price:228,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-tramadol-para',name:'Tramadol / Paracetamol Alpharma',detail:'Presentación sujeta a disponibilidad',price:75,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-tramadol-gotas',name:'Tramadol en gotas Alpharma',detail:'Presentación sujeta a disponibilidad',price:75,category:'Medicamento especial',icon:'🔒',special:true},
+
+  {id:'p-oximetro-nino',name:'Oxímetro para niño',detail:'Equipo de monitoreo pediátrico',price:180,category:'Otros productos',icon:'👶'},
+  {id:'p-oximetro-a2',name:'Oxímetro A2',detail:'Medición de saturación de oxígeno',price:100,category:'Otros productos',icon:'🩺'},
+  {id:'p-oximetro-economico',name:'Oxímetro económico',detail:'Equipo portátil',price:90,category:'Otros productos',icon:'🫁'},
+  {id:'p-dengue',name:'Prueba Dengue Dúo Realy',detail:'Precio por pieza',price:90,category:'Otros productos',icon:'🦟',badge:'Oferta'},
+  {id:'p-covid',name:'Prueba COVID e Influenza Dúo o VIH',detail:'Precio por pieza',price:90,category:'Otros productos',icon:'🦠',badge:'Oferta'},
+  {id:'p-antidoping',name:'Prueba antidoping de 6 parámetros',detail:'Precio por pieza',price:100,category:'Otros productos',icon:'🧪',badge:'Oferta'},
+  {id:'p-triple',name:'Prueba triple Influenza A y B, COVID-19 y Virus Sincitial',detail:'Precio por pieza',price:100,category:'Otros productos',icon:'🧬',badge:'Oferta'},
+  {id:'p-cuadruple',name:'Prueba cuádruple Influenza A y B, COVID-19, Virus Sincitial y Adenovirus',detail:'Precio por pieza',price:120,category:'Otros productos',icon:'🧬',badge:'Oferta'},
+  {id:'p-kn95-negro',name:'Cubrebocas KN95 negros',detail:'Precio por pieza',price:5,category:'Otros productos',icon:'😷'},
+  {id:'p-ttp-infantil',name:'Cubrebocas TTP infantil rosa o blanco',detail:'Caja con 50 piezas',price:60,category:'Otros productos',icon:'😷'},
+  {id:'p-ttp-negro',name:'Cubrebocas TTP negros',detail:'Caja con 50 piezas',price:60,category:'Otros productos',icon:'😷'},
+  {id:'p-kn94',name:'Cubrebocas KN94',detail:'Precio por pieza',price:5,category:'Otros productos',icon:'😷'},
+  {id:'p-tubo-rojo',name:'Tubo rojo',detail:'Caja con 100 piezas',price:220,category:'Otros productos',icon:'🧪'},
+  {id:'p-tubo-lila',name:'Tubo lila',detail:'Caja con 100 piezas',price:280,category:'Otros productos',icon:'🧪'},
+  {id:'p-cofias',name:'Paquete de cofias',detail:'Paquete con 100 piezas',price:160,category:'Otros productos',icon:'🥼'},
+  {id:'p-guantes-nitrilo-chico',name:'Guantes de nitrilo chicos',detail:'Caja',price:160,category:'Guantes',icon:'🧤'},
+  {id:'p-guantes-nitrilo-mediano',name:'Guantes de nitrilo medianos',detail:'Caja',price:160,category:'Guantes',icon:'🧤'},
+  {id:'p-guantes-nitrilo-grande',name:'Guantes de nitrilo grandes',detail:'Caja',price:160,category:'Guantes',icon:'🧤'},
+  {id:'p-guantes-ambiderm-chico',name:'Guantes Ambiderm estériles chicos',detail:'Caja',price:160,category:'Guantes',icon:'🧤'},
+  {id:'p-guantes-ambiderm-mediano',name:'Guantes Ambiderm estériles medianos',detail:'Caja',price:160,category:'Guantes',icon:'🧤'},
+  {id:'p-guantes-ambiderm-grande',name:'Guantes Ambiderm estériles grandes',detail:'Caja',price:160,category:'Guantes',icon:'🧤'},
+  {id:'p-baumanometro-escritorio',name:'Baumanómetro de escritorio',detail:'Equipo médico',price:220,category:'Otros productos',icon:'🩺'},
+  {id:'p-baumanometro-pulsera',name:'Baumanómetro de pulsera',detail:'Equipo médico',price:240,category:'Otros productos',icon:'⌚'},
+  {id:'p-termometro-nino',name:'Termómetro para niño',detail:'Equipo médico',price:55,category:'Otros productos',icon:'🌡️'},
+  {id:'p-termometro-mercurio',name:'Termómetro de mercurio',detail:'Equipo médico',price:20,category:'Otros productos',icon:'🌡️'},
+  {id:'p-termometro-pistola',name:'Termómetro tipo pistola',detail:'Equipo médico',price:160,category:'Otros productos',icon:'🌡️'},
+  {id:'p-termometro-digital',name:'Termómetro digital',detail:'Equipo médico',price:25,category:'Otros productos',icon:'🌡️'},
+  {id:'p-nebulizador-azul',name:'Nebulizador azul',detail:'Equipo médico',price:225,category:'Otros productos',icon:'💨'},
+
+  {id:'p-complejo-b',name:'Complejo B',detail:'Caja con 30 tabletas',price:37.81,category:'Vitaminas y suplementos',icon:'🌿'},
+  {id:'p-suplemento17',name:'Suplemento con 17 vitaminas',detail:'Suplemento alimenticio',price:300,category:'Vitaminas y suplementos',icon:'🍊'},
+
+  {id:'p-forxiga',name:'Forxiga',detail:'Promoción: 3 cajas por $1,000.00',price:1000,category:'Diabetes',icon:'💙',badge:'3 por $1,000'},
+  {id:'p-trayenta',name:'Trayenta',detail:'Promoción: 3 cajas por $1,000.00',price:1000,category:'Diabetes',icon:'💙',badge:'3 por $1,000'}
+];
+
+const LIST_CATEGORIES = new Set(['Medicamento básico','Medicamento especial']);
+const state={cart:JSON.parse(localStorage.getItem('elbambino-cart')||'{}'),category:'Todos',query:'',offer:0,page:1,pageSize:75};
+const $=s=>document.querySelector(s);const $$=s=>[...document.querySelectorAll(s)];
+const money=value=>new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(value);
+const saveCart=()=>localStorage.setItem('elbambino-cart',JSON.stringify(state.cart));
+
+function populateCategories(){
+  const select=$('#categoryFilter');
+  [...new Set(PRODUCTS.map(p=>p.category))].sort().forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;select.appendChild(o)});
+}
+
+function productMatches(p,q){
+  return !q || `${p.name} ${p.detail} ${p.category}`.toLowerCase().includes(q);
+}
+
+function renderProducts(){
+  const grid=$('#productGrid');
+  const q=state.query.trim().toLowerCase();
+  const allMatches=PRODUCTS.filter(p=>(state.category==='Todos'||p.category===state.category)&&productMatches(p,q));
+  const usePaging=state.category==='Medicamento básico';
+  const totalPages=Math.max(1,Math.ceil(allMatches.length/state.pageSize));
+  if(state.page>totalPages) state.page=totalPages;
+  const list=usePaging?allMatches.slice((state.page-1)*state.pageSize,state.page*state.pageSize):allMatches;
+  const useList = LIST_CATEGORIES.has(state.category);
+  grid.classList.toggle('catalog-list-mode', useList);
+
+  if(useList){
+    const warning = state.category==='Medicamento especial'
+      ? '<div class="special-list-notice">🔒 Disponibilidad sujeta a validación. Solicitud únicamente para clientes que cuentan con receta.</div>'
+      : '';
+    grid.innerHTML = warning + `<div class="catalog-table-wrap"><table class="catalog-table">
+      <thead><tr><th>Producto</th><th>Presentación</th><th>Precio estimado</th><th>Cantidad</th><th>Acción</th></tr></thead>
+      <tbody>${list.map(p=>`<tr>
+        <td><strong>${p.name}</strong></td>
+        <td>${p.detail}</td>
+        <td><strong>${money(p.price)}</strong></td>
+        <td><input class="qty-input" data-qty-for="${p.id}" type="number" value="1" min="1" max="99" aria-label="Cantidad"></td>
+        <td><button class="btn ${p.special?'btn-special':'btn-primary'} add-product" data-product-id="${p.id}">${p.special?'Solicitar (cuento con receta)':'Agregar al carrito'}</button></td>
+      </tr>`).join('')}</tbody></table></div>` +
+      (usePaging?`<div class="catalog-pagination"><button id="prevCatalogPage" type="button" ${state.page<=1?'disabled':''}>← Anterior</button><span>Página ${state.page} de ${totalPages} · ${allMatches.length} productos</span><button id="nextCatalogPage" type="button" ${state.page>=totalPages?'disabled':''}>Siguiente →</button></div>`:'');
+  }else{
+    grid.innerHTML=list.map(p=>`<article class="product-card ${p.special?'special-card':''}">
+      <span class="product-badge ${p.special?'special-badge':''}">${p.special?'Medicamento especial':(p.badge||p.category)}</span>
+      <div class="product-visual">${p.icon}</div>
+      <div class="product-body"><span class="product-category">${p.category}</span><h3>${p.name}</h3><p class="product-detail">${p.detail}</p><div class="product-price">${money(p.price)}</div><div class="estimated">Precio estimado; puede variar al llegar desde almacén.</div>
+      <div class="product-actions"><button class="btn ${p.special?'btn-special':'btn-primary'} add-product" data-product-id="${p.id}">${p.special?'Solicitar (cuento con receta)':'Agregar al carrito'}</button><input class="qty-input" data-qty-for="${p.id}" type="number" value="1" min="1" max="99" aria-label="Cantidad"></div></div>
+    </article>`).join('');
+  }
+
+  $('#emptyState').hidden=list.length>0;
+  $$('.add-product').forEach(b=>b.addEventListener('click',()=>addToCart(b.dataset.productId,Number(document.querySelector(`[data-qty-for="${b.dataset.productId}"]`).value)||1)));
+  const prev=$('#prevCatalogPage');const next=$('#nextCatalogPage');
+  if(prev)prev.onclick=()=>{state.page--;renderProducts();document.querySelector('#productos').scrollIntoView()};
+  if(next)next.onclick=()=>{state.page++;renderProducts();document.querySelector('#productos').scrollIntoView()};
+}
+
+function addToCart(id,qty=1){state.cart[id]=(state.cart[id]||0)+qty;saveCart();renderCart();openPanel('cartDrawer')}
+function changeQty(id,delta){state.cart[id]=(state.cart[id]||0)+delta;if(state.cart[id]<=0)delete state.cart[id];saveCart();renderCart()}
+function removeItem(id){delete state.cart[id];saveCart();renderCart()}
+function cartEntries(){return Object.entries(state.cart).map(([id,qty])=>({product:PRODUCTS.find(p=>p.id===id),qty})).filter(x=>x.product)}
+function renderCart(){
+  const items=cartEntries();const count=items.reduce((s,x)=>s+x.qty,0);const subtotal=items.reduce((s,x)=>s+x.product.price*x.qty,0);
+  $('#cartCount').textContent=count;$('#cartSubtotal').textContent=money(subtotal);
+  $('#cartItems').innerHTML=items.length?items.map(({product:p,qty})=>`<div class="cart-row"><div><h4>${p.name}</h4><small>${money(p.price)} c/u</small><div class="cart-row-actions"><button data-minus="${p.id}">−</button><strong>${qty}</strong><button data-plus="${p.id}">+</button><button class="remove-item" data-remove="${p.id}">Eliminar</button></div></div><strong>${money(p.price*qty)}</strong></div>`).join(''):'<div class="cart-empty"><div style="font-size:54px">🛒</div><h3>Tu carrito está vacío</h3><p>Agrega productos para comenzar.</p></div>';
+  $$('[data-minus]').forEach(b=>b.onclick=()=>changeQty(b.dataset.minus,-1));$$('[data-plus]').forEach(b=>b.onclick=()=>changeQty(b.dataset.plus,1));$$('[data-remove]').forEach(b=>b.onclick=()=>removeItem(b.dataset.remove));
+  $('#checkoutButton').disabled=!items.length;
+}
+
+function openPanel(id){$('#overlay').hidden=false;const el=document.getElementById(id);el.hidden=false;requestAnimationFrame(()=>el.classList.add('open'));el.setAttribute('aria-hidden','false')}
+function closePanel(id){const el=document.getElementById(id);el.classList.remove('open');el.setAttribute('aria-hidden','true');setTimeout(()=>{el.hidden=true;if(!document.querySelector('.drawer.open')&&!document.querySelector('.modal:not([hidden])'))$('#overlay').hidden=true},320)}
+function closeModal(id){document.getElementById(id).hidden=true;$('#overlay').hidden=true}
+
+function setupOffers(){
+  const slides=$$('.offer-slide');const dots=$('#offerDots');
+  slides.forEach((_,i)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-label',`Mostrar oferta ${i+1}`);b.onclick=()=>showOffer(i);dots.appendChild(b)});
+  function show(i){state.offer=(i+slides.length)%slides.length;slides.forEach((s,j)=>s.classList.toggle('active',j===state.offer));[...dots.children].forEach((d,j)=>d.classList.toggle('active',j===state.offer))}
+  window.showOffer=show;show(0);$('#prevOffer').onclick=()=>show(state.offer-1);$('#nextOffer').onclick=()=>show(state.offer+1);setInterval(()=>show(state.offer+1),6500);
+}
+
+function setupSearch(){
+  const input=$('#searchInput');const suggestions=$('#searchSuggestions');
+  const update=()=>{state.query=input.value;state.page=1;renderProducts();const q=input.value.trim().toLowerCase();if(!q){suggestions.hidden=true;return}const hits=PRODUCTS.filter(p=>`${p.name} ${p.category}`.toLowerCase().includes(q)).slice(0,7);suggestions.innerHTML=hits.map(p=>`<button type="button" data-suggest="${p.id}"><span>${p.name}</span><strong>${money(p.price)}</strong></button>`).join('');suggestions.hidden=!hits.length;$$('[data-suggest]').forEach(b=>b.onclick=()=>{const p=PRODUCTS.find(x=>x.id===b.dataset.suggest);input.value=p.name;state.query=p.name;state.category='Todos';$('#categoryFilter').value='Todos';renderProducts();suggestions.hidden=true;document.querySelector('#productos').scrollIntoView()})};
+  input.addEventListener('input',update);$('#searchButton').onclick=()=>{update();document.querySelector('#productos').scrollIntoView()};document.addEventListener('click',e=>{if(!e.target.closest('.search-wrap'))suggestions.hidden=true});
+}
+
+
+function buildOrderPdf(order){
+  if(!window.jspdf || !window.jspdf.jsPDF) return null;
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:'mm',format:'a4'});
+  const left=15; let y=16;
+  const addLine=(label,value)=>{
+    doc.setFont('helvetica','bold'); doc.text(`${label}:`,left,y);
+    doc.setFont('helvetica','normal');
+    const lines=doc.splitTextToSize(String(value||''),145);
+    doc.text(lines,left+38,y);
+    y+=Math.max(7,lines.length*6);
+  };
+  doc.setFont('helvetica','bold'); doc.setFontSize(18);
+  doc.text('EL BAMBINO DANIEL',left,y); y+=8;
+  doc.setFontSize(12); doc.setFont('helvetica','normal');
+  doc.text('Pedido generado desde elbambinodaniel.com',left,y); y+=10;
+  addLine('Folio',order.folio);
+  addLine('Fecha',new Date(order.fecha).toLocaleString('es-MX'));
+  addLine('Cliente',order.cliente.nombre);
+  addLine('Teléfono',order.cliente.telefono);
+  addLine('Domicilio',order.cliente.domicilio);
+  addLine('Colonia',order.cliente.colonia);
+  addLine('Ciudad',`${order.cliente.ciudad}, ${order.cliente.estado}, C.P. ${order.cliente.cp}`);
+  addLine('Horario',order.cliente.horario);
+  addLine('Cierra al mediodía',order.cliente.cierra);
+  addLine('Forma de pago',order.cliente.pago);
+  addLine('Observaciones',order.cliente.observaciones||'Sin observaciones');
+  y+=3;
+  doc.setFont('helvetica','bold'); doc.text('Productos',left,y); y+=7;
+  doc.setFont('helvetica','normal');
+  order.productos.forEach((p,i)=>{
+    const line=`${i+1}. ${p.nombre} | Cantidad: ${p.cantidad} | Precio estimado: ${money(p.precioEstimado)} | Importe: ${money(p.precioEstimado*p.cantidad)}`;
+    const lines=doc.splitTextToSize(line,180);
+    if(y+lines.length*6>280){doc.addPage();y=16}
+    doc.text(lines,left,y); y+=lines.length*6+2;
+  });
+  y+=3;
+  doc.setFont('helvetica','bold');
+  doc.text(`Total estimado: ${money(order.subtotalEstimado)}`,left,y); y+=8;
+  doc.setFont('helvetica','normal'); doc.setFontSize(10);
+  doc.text(doc.splitTextToSize(order.avisoPrecio,180),left,y);
+  return doc;
+}
+
+async function sendOrderAutomatically(order){
+  const apiUrl=(window.ORDER_API_URL||'').trim().replace(/\/$/,'');
+  if(!apiUrl){
+    throw new Error('El servidor de pedidos no está configurado.');
+  }
+
+  const closesMiddayValue=String(order.cliente.cierra||'').toLowerCase();
+  const payload={
+    customerName:order.cliente.nombre||'',
+    phone:order.cliente.telefono||'',
+    address:order.cliente.domicilio||'',
+    neighborhood:order.cliente.colonia||'',
+    city:order.cliente.ciudad||'',
+    state:order.cliente.estado||'',
+    businessHours:order.cliente.horario||'',
+    closesMidday:['sí','si','yes','true','1'].includes(closesMiddayValue),
+    paymentMethod:order.cliente.pago||'Pagar al recibir',
+    items:(order.productos||[]).map(p=>({
+      id:p.id,
+      name:p.nombre,
+      nombre:p.nombre,
+      quantity:Number(p.cantidad||1),
+      cantidad:Number(p.cantidad||1),
+      price:Number(p.precioEstimado||0),
+      precio:Number(p.precioEstimado||0)
+    })),
+    total:Number(order.subtotalEstimado||0),
+    notes:order.cliente.observaciones||''
+  };
+
+  const response=await fetch(`${apiUrl}/api/orders`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  });
+
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok) throw new Error(data.error||'No fue posible enviar el pedido.');
+  return data;
+}
+
+function setupCheckout(){
+  $('#checkoutButton').onclick=()=>{if(!cartEntries().length)return;closePanel('cartDrawer');setTimeout(()=>openPanel('checkoutDrawer'),340)};
+  $('#checkoutForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const submitButton=e.currentTarget.querySelector('button[type="submit"]');
+    submitButton.disabled=true; submitButton.textContent='ENVIANDO PEDIDO...';
+    try{
+      const data=Object.fromEntries(new FormData(e.currentTarget).entries());
+      const items=cartEntries();
+      const subtotal=items.reduce((s,x)=>s+x.product.price*x.qty,0);
+      const folio=`EBD-${new Date().toISOString().slice(0,10).replaceAll('-','')}-${Math.random().toString(36).slice(2,7).toUpperCase()}`;
+      const order={folio,fecha:new Date().toISOString(),status:'pending',cliente:data,productos:items.map(x=>({id:x.product.id,nombre:x.product.name,cantidad:x.qty,precioEstimado:x.product.price})),subtotalEstimado:subtotal,estado:'Pedido recibido',avisoPrecio:'El precio final se confirma cuando el producto llega desde almacén.'};
+      const result=await sendOrderAutomatically(order);
+      if(result.orderNumber) order.folio=result.orderNumber;
+      const orders=JSON.parse(localStorage.getItem('elbambino-orders')||'[]');orders.unshift(order);localStorage.setItem('elbambino-orders',JSON.stringify(orders));
+      closePanel('checkoutDrawer');state.cart={};saveCart();renderCart();e.currentTarget.reset();
+      setTimeout(()=>{
+        $('#overlay').hidden=false;$('#successModal').hidden=false;$('#orderNumber').textContent=order.folio;
+        const msg=$('#successModal p');
+        msg.textContent='El pedido fue enviado automáticamente y quedó registrado con su folio.';
+      },340);
+    }catch(error){
+      alert(`No fue posible enviar el pedido automáticamente. ${error.message}`);
+    }finally{
+      submitButton.disabled=false; submitButton.textContent='CONFIRMAR PEDIDO';
+    }
+  });
+}
+
+function setupVisitorCounter(){
+  const key='elbambino-visitor-count';
+  const sessionKey='elbambino-visitor-session';
+  let count=Number(localStorage.getItem(key)||0);
+  if(!sessionStorage.getItem(sessionKey)){
+    count+=1;
+    localStorage.setItem(key,String(count));
+    sessionStorage.setItem(sessionKey,'1');
+  }
+  const el=document.getElementById('visitorCount');
+  if(el) el.textContent=new Intl.NumberFormat('es-MX').format(count);
+}
+
+function init(){
+  populateCategories();
+  renderProducts();
+  renderCart();
+  setupOffers();
+  setupSearch();
+  setupCheckout();
+  setupVisitorCounter();
+
+  const categoryFilter=$('#categoryFilter');
+  if(categoryFilter){
+    categoryFilter.onchange=e=>{
+      state.category=e.target.value;
+      state.page=1;
+      renderProducts();
+    };
+  }
+
+  const openCategory=(category)=>{
+    if(!category) return;
+    state.category=category;
+    state.page=1;
+    if(categoryFilter) categoryFilter.value=category;
+    renderProducts();
+    setTimeout(()=>{
+      document.querySelector('#productos')?.scrollIntoView({behavior:'smooth',block:'start'});
+    },50);
+  };
+
+  $$('.category-card').forEach(button=>{
+    button.type='button';
+    button.addEventListener('click',event=>{
+      event.preventDefault();
+      openCategory(button.dataset.category);
+    });
+  });
+
+  document.addEventListener('click',event=>{
+    const card=event.target.closest('.category-card');
+    if(!card) return;
+    event.preventDefault();
+    openCategory(card.dataset.category);
+  });
+
+  $$('.quick-add').forEach(button=>{
+    button.onclick=()=>addToCart(button.dataset.productId,1);
+  });
+
+  const cartButton=$('#cartButton');
+  if(cartButton) cartButton.onclick=()=>openPanel('cartDrawer');
+
+  $$('[data-close]').forEach(button=>{
+    button.onclick=()=>{
+      const id=button.dataset.close;
+      const element=document.getElementById(id);
+      if(!element) return;
+      element.classList.contains('drawer') ? closePanel(id) : closeModal(id);
+    };
+  });
+
+  const overlay=$('#overlay');
+  if(overlay){
+    overlay.onclick=()=>{
+      $$('.drawer.open').forEach(drawer=>closePanel(drawer.id));
+      const successModal=$('#successModal');
+      if(successModal && !successModal.hidden) closeModal('successModal');
+    };
+  }
+
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape'){
+      $$('.drawer.open').forEach(drawer=>closePanel(drawer.id));
+      const successModal=$('#successModal');
+      if(successModal && !successModal.hidden) closeModal('successModal');
+    }
+  });
+}
+
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',init);
+}else{
+  init();
+}
+
+/* Compatibilidad reforzada para las tarjetas de categorías del HTML actual */
+(function(){
+  const CATEGORY_NAMES=[
+    'Medicamento básico',
+    'Medicamento especial',
+    'Otros productos',
+    'Guantes',
+    'Vitaminas y suplementos',
+    'Diabetes'
   ];
 
-  const source = Array.isArray(window.BASIC_PRODUCTS) ? window.BASIC_PRODUCTS : [];
-  const normalize = (p,i) => ({
-    id: String(p.id || `producto-${i}`),
-    name: String(p.name || p.nombre || 'Producto'),
-    detail: String(p.detail || p.descripcion || p.presentacion || ''),
-    price: Number(p.price ?? p.precio ?? 0),
-    category: String(p.category || p.categoria || 'Medicamento básico'),
-    special: Boolean(p.special)
-  });
-  const seen = new Set();
-  const PRODUCTS = [...source.map(normalize), ...extras.map(normalize)].filter(p => !seen.has(p.id) && seen.add(p.id));
-  const state = {category:'Todos', query:'', cart:JSON.parse(localStorage.getItem('elbambino-cart')||'{}')};
-
-  function saveCart(){ localStorage.setItem('elbambino-cart',JSON.stringify(state.cart)); }
-  function entries(){ return Object.entries(state.cart).map(([id,qty])=>({product:PRODUCTS.find(p=>p.id===id),qty:Number(qty)})).filter(x=>x.product&&x.qty>0); }
-
-  function populateCategories(){
-    const select=$('#categoryFilter'); if(!select) return;
-    select.innerHTML='<option value="Todos">Todas las categorías</option>';
-    [...new Set(PRODUCTS.map(p=>p.category))].sort().forEach(c=>select.insertAdjacentHTML('beforeend',`<option value="${c.replace(/"/g,'&quot;')}">${c}</option>`));
+  function normalize(value){
+    return String(value||'')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g,'')
+      .trim()
+      .toLowerCase();
   }
 
-  function renderProducts(){
-    const grid=$('#productGrid'), empty=$('#emptyState'); if(!grid) return;
-    const q=state.query.trim().toLowerCase();
-    const list=PRODUCTS.filter(p=>(state.category==='Todos'||p.category===state.category)&&(!q||`${p.name} ${p.detail} ${p.category}`.toLowerCase().includes(q)));
-    grid.innerHTML=list.map(p=>`<article class="product-card">
-      <div class="product-icon">${p.special?'🔒':'💊'}</div>
-      <div class="product-copy"><span class="product-category">${p.category}</span><h3>${p.name}</h3><p>${p.detail}</p></div>
-      <div class="product-buy"><strong>${p.price>0?money(p.price):'Precio por confirmar'}</strong><button type="button" class="btn btn-primary" data-add="${p.id}">${p.special?'Solicitar (cuento con receta)':'Agregar al carrito'}</button></div>
-    </article>`).join('');
-    if(empty) empty.hidden=list.length>0;
-    $$('[data-add]').forEach(b=>b.onclick=()=>addToCart(b.dataset.add,1));
+  function categoryFromElement(element){
+    const direct=element?.dataset?.category || element?.getAttribute?.('data-category');
+    if(direct) return direct;
+    const text=normalize(element?.textContent);
+    return CATEGORY_NAMES.find(name=>text.includes(normalize(name))) || '';
   }
 
-  function addToCart(id,n){ state.cart[id]=(Number(state.cart[id])||0)+n; if(state.cart[id]<=0) delete state.cart[id]; saveCart(); renderCart(); }
-  function renderCart(){
-    const items=entries(), wrap=$('#cartItems'), subtotal=$('#cartSubtotal'), count=$('#cartCount');
-    if(wrap) wrap.innerHTML=items.length?items.map(({product,qty})=>`<div class="cart-item"><div><strong>${product.name}</strong><span>${money(product.price)} c/u</span></div><div class="qty"><button type="button" data-minus="${product.id}">−</button><b>${qty}</b><button type="button" data-plus="${product.id}">+</button></div></div>`).join(''):'<p>Tu carrito está vacío.</p>';
-    if(subtotal) subtotal.textContent=money(items.reduce((s,x)=>s+x.product.price*x.qty,0));
-    if(count) count.textContent=items.reduce((s,x)=>s+x.qty,0);
-    const checkout=$('#checkoutButton'); if(checkout) checkout.disabled=!items.length;
-    $$('[data-minus]').forEach(b=>b.onclick=()=>addToCart(b.dataset.minus,-1));
-    $$('[data-plus]').forEach(b=>b.onclick=()=>addToCart(b.dataset.plus,1));
+  function activateCategory(category){
+    if(!category || typeof state==='undefined' || typeof renderProducts!=='function') return;
+    state.category=category;
+    state.page=1;
+
+    const select=document.getElementById('categoryFilter');
+    if(select) select.value=category;
+
+    renderProducts();
+
+    const section=document.getElementById('productos')
+      || document.getElementById('productGrid')
+      || document.querySelector('.products-section')
+      || document.querySelector('[data-products-section]');
+
+    if(section){
+      section.hidden=false;
+      section.style.display='';
+      setTimeout(()=>section.scrollIntoView({behavior:'smooth',block:'start'}),50);
+    }
   }
 
-  function openPanel(id){ const el=document.getElementById(id),ov=$('#overlay'); if(!el)return; if(ov)ov.hidden=false; el.hidden=false; requestAnimationFrame(()=>el.classList.add('open')); el.setAttribute('aria-hidden','false'); }
-  function closePanel(id){ const el=document.getElementById(id),ov=$('#overlay'); if(!el)return; el.classList.remove('open'); el.setAttribute('aria-hidden','true'); setTimeout(()=>{el.hidden=true;if(ov)ov.hidden=true},300); }
+  function bindCategories(){
+    const candidates=[
+      ...document.querySelectorAll(
+        '.category-card,[data-category],.category-item,.category-box,.category-tile,.categoria-card,.categoria'
+      )
+    ];
 
-  function bind(){
-    const select=$('#categoryFilter'); if(select) select.onchange=e=>{state.category=e.target.value;renderProducts()};
-    const search=$('#searchInput'); if(search) search.oninput=e=>{state.query=e.target.value;renderProducts()};
-    const sb=$('#searchButton'); if(sb) sb.onclick=()=>{state.query=search?.value||'';renderProducts();$('#productos')?.scrollIntoView({behavior:'smooth'})};
-    $$('.category-card').forEach(card=>card.addEventListener('click',e=>{e.preventDefault();state.category=card.dataset.category||'Todos';if(select)select.value=state.category;renderProducts();$('#productos')?.scrollIntoView({behavior:'smooth'})}));
-    const cb=$('#cartButton'); if(cb) cb.onclick=()=>openPanel('cartDrawer');
-    const co=$('#checkoutButton'); if(co) co.onclick=()=>{if(entries().length){closePanel('cartDrawer');setTimeout(()=>openPanel('checkoutDrawer'),320)}};
-    $$('[data-close]').forEach(b=>b.onclick=()=>{const id=b.dataset.close;document.getElementById(id)?.classList.contains('drawer')?closePanel(id):(document.getElementById(id).hidden=true,$('#overlay').hidden=true)});
-    const ov=$('#overlay'); if(ov) ov.onclick=()=>{$$('.drawer.open').forEach(d=>closePanel(d.id));};
-
-    const form=$('#checkoutForm');
-    if(form) form.addEventListener('submit',e=>{
-      e.preventDefault(); const data=Object.fromEntries(new FormData(form).entries()); const items=entries(); if(!items.length)return;
-      const folio=`EBD-${new Date().toISOString().slice(0,10).replaceAll('-','')}-${Math.random().toString(36).slice(2,7).toUpperCase()}`;
-      const lines=items.map(x=>`• ${x.product.name} x ${x.qty}`).join('\n');
-      const total=items.reduce((s,x)=>s+x.product.price*x.qty,0);
-      const text=`NUEVO PEDIDO EN ELBAMBINODANIEL.COM\nFolio: ${folio}\nCliente: ${data.nombre||''}\nTeléfono: ${data.telefono||''}\nDomicilio: ${data.domicilio||''}, ${data.colonia||''}, ${data.ciudad||''}, ${data.estado||''}, C.P. ${data.cp||''}\nHorario: ${data.horario||''}\nCierra al mediodía: ${data.cierra||''}\nPago: ${data.pago||''}\n\nProductos:\n${lines}\n\nTotal estimado: ${money(total)}\nObservaciones: ${data.observaciones||'Sin observaciones'}`;
-      localStorage.setItem('elbambino-orders',JSON.stringify([{folio,fecha:new Date().toISOString(),cliente:data,productos:items},...JSON.parse(localStorage.getItem('elbambino-orders')||'[]')]));
-      state.cart={};saveCart();renderCart();form.reset();closePanel('checkoutDrawer');
-      const phone=String(window.EL_BAMBINO_WHATSAPP||'523331191167').replace(/\D/g,'');
-      window.location.href=`https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+    candidates.forEach(element=>{
+      if(element.dataset.categoryBound==='1') return;
+      const category=categoryFromElement(element);
+      if(!category) return;
+      element.dataset.categoryBound='1';
+      element.style.cursor='pointer';
+      element.addEventListener('click',event=>{
+        event.preventDefault();
+        event.stopPropagation();
+        activateCategory(category);
+      });
     });
   }
 
-  function init(){ populateCategories(); renderProducts(); renderCart(); bind(); }
-  document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
+  document.addEventListener('click',event=>{
+    const element=event.target.closest(
+      '.category-card,[data-category],.category-item,.category-box,.category-tile,.categoria-card,.categoria'
+    );
+    if(!element) return;
+    const category=categoryFromElement(element);
+    if(!category) return;
+    event.preventDefault();
+    activateCategory(category);
+  },true);
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',bindCategories);
+  }else{
+    bindCategories();
+  }
+
+  setTimeout(bindCategories,500);
+  setTimeout(bindCategories,1500);
 })();
