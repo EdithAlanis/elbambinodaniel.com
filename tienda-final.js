@@ -287,3 +287,58 @@ function init(){
 }
 
 document.addEventListener('DOMContentLoaded',init);
+
+async function sendOrder(order){
+  const apiUrl=(window.ORDER_API_URL||'').replace(/\/$/,'');
+  const phone=(window.EL_BAMBINO_WHATSAPP||'523331191167').replace(/\D/g,'');
+  const products=(order.productos||[]).map(p=>`• ${p.nombre} x ${p.cantidad}`).join('\n');
+  const text=[
+    'NUEVO PEDIDO EN ELBAMBINODANIEL.COM',
+    `Folio: ${order.folio}`,
+    `Cliente: ${order.cliente.nombre}`,
+    `Teléfono: ${order.cliente.telefono}`,
+    `Domicilio: ${order.cliente.domicilio}, ${order.cliente.colonia}, ${order.cliente.ciudad}, ${order.cliente.estado}, C.P. ${order.cliente.cp}`,
+    `Horario: ${order.cliente.horario}`,
+    `Cierra al mediodía: ${order.cliente.cierra}`,
+    `Pago: ${order.cliente.pago}`,
+    '',
+    'Productos:',
+    products,
+    '',
+    `Total estimado: ${money(order.subtotalEstimado)}`,
+    `Observaciones: ${order.cliente.observaciones||'Sin observaciones'}`
+  ].join('\n');
+
+  if(apiUrl && !apiUrl.includes('TU-SERVIDOR')){
+    const response=await fetch(`${apiUrl}/api/orders`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(order)
+    });
+    if(!response.ok){
+      const data=await response.json().catch(()=>({}));
+      throw new Error(data.error||'No fue posible guardar el pedido.');
+    }
+  }else{
+    const orders=JSON.parse(localStorage.getItem('elbambino-orders')||'[]');
+    orders.unshift(order);
+    localStorage.setItem('elbambino-orders',JSON.stringify(orders));
+  }
+
+  const pdf=buildOrderPdf(order);
+  if(pdf) pdf.save(`${order.folio}.pdf`);
+  window.location.href=`https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+  return {sent:true};
+}
+
+async function registerGlobalVisit(){
+  const apiUrl=(window.ORDER_API_URL||'').replace(/\/$/,'');
+  if(!apiUrl || apiUrl.includes('TU-SERVIDOR')) return;
+  try{
+    const r=await fetch(`${apiUrl}/api/visits`,{method:'POST'});
+    const data=await r.json();
+    const el=document.getElementById('visitorCount');
+    if(el && data.total!=null) el.textContent=new Intl.NumberFormat('es-MX').format(data.total);
+  }catch(_){}
+}
+document.addEventListener('DOMContentLoaded',registerGlobalVisit);

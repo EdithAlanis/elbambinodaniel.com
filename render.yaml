@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: elbambino-pedidos
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: ADMIN_PIN
+        sync: false
+      - key: ALLOWED_ORIGIN
+        value: https://elbambinodaniel.com
+      - key: DATA_DIR
+        value: /var/data
+      - key: NOTIFY_EMAIL
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_SECURE
+        value: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      - key: WHATSAPP_ACCESS_TOKEN
+        sync: false
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        sync: false
+      - key: ORDER_RECIPIENT_PHONE
+        value: 523331191167
+    disk:
+      name: elbambino-data
+      mountPath: /var/data
+      sizeGB: 1
