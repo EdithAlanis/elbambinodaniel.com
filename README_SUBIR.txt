@@ -1,22 +1,10 @@
-EL BAMBINO DANIEL — ACCESO MÓVIL FINAL
+EL BAMBINO DANIEL — CORRECCIÓN DEL CATÁLOGO
 
-FUNCIONAMIENTO
-- En la tienda aparece el botón “REVISAR PEDIDOS”.
-- Al tocarlo desde celular o computadora abre panel-pedidos.html.
-- La clave se captura tocando botones numéricos dentro de la página.
-- No existe un campo de texto, por lo que no debe abrirse el teclado del celular.
-- La dirección antigua admin.html redirige automáticamente al panel nuevo.
+1. Abra el repositorio de elbambinodaniel.com en GitHub.
+2. Presione Add file / Agregar archivo > Upload files / Subir archivos.
+3. Suba el archivo tienda-final.js incluido en este ZIP.
+4. Confirme Replace / Reemplazar cuando GitHub indique que ya existe.
+5. Presione Commit changes / Confirmar cambios.
+6. Espere uno o dos minutos y abra la página en una ventana privada.
 
-SUBIR
-1. Suba TODOS los archivos de este ZIP a la raíz del repositorio.
-2. Reemplace los archivos existentes.
-3. Presione Commit changes.
-4. Espere de 1 a 3 minutos.
-5. Abra https://elbambinodaniel.com/?acceso=movil
-6. Toque el botón REVISAR PEDIDOS.
-
-ACCESO DIRECTO
-https://elbambinodaniel.com/panel-pedidos.html?acceso=movil
-
-NOTA DE SEGURIDAD
-La clave evita el acceso casual, pero al ser una página estática no equivale a una autenticación de servidor.
+Esta corrección vuelve a mostrar los productos, activa las categorías, buscador, carrito y envío del pedido por WhatsApp.
