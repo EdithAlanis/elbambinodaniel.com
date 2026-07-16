@@ -1,38 +1,33 @@
 services:
   - type: web
-    name: elbambino-pedidos
+    name: elbambinodaniel-pedidos
     runtime: node
-    rootDir: backend
+    plan: free
     buildCommand: npm install
     startCommand: npm start
+    healthCheckPath: /api/health
     envVars:
-      - key: ADMIN_PIN
-        sync: false
-      - key: ALLOWED_ORIGIN
-        value: https://elbambinodaniel.com
-      - key: DATA_DIR
-        value: /var/data
-      - key: NOTIFY_EMAIL
-        sync: false
-      - key: SMTP_HOST
-        sync: false
-      - key: SMTP_PORT
-        value: 587
-      - key: SMTP_SECURE
-        value: false
-      - key: SMTP_USER
-        sync: false
-      - key: SMTP_PASS
-        sync: false
-      - key: SMTP_FROM
-        sync: false
-      - key: WHATSAPP_ACCESS_TOKEN
+      - key: NODE_VERSION
+        value: 20
+      - key: ADMIN_PASSWORD
+        value: "2222"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ALLOWED_ORIGINS
+        value: https://elbambinodaniel.com,https://www.elbambinodaniel.com
+      - key: DATABASE_URL
+        fromDatabase:
+          name: elbambinodaniel-db
+          property: connectionString
+      - key: ADMIN_WHATSAPP
+        value: "523331191167"
+      - key: WHATSAPP_TOKEN
         sync: false
       - key: WHATSAPP_PHONE_NUMBER_ID
         sync: false
-      - key: ORDER_RECIPIENT_PHONE
-        value: 523331191167
-    disk:
-      name: elbambino-data
-      mountPath: /var/data
-      sizeGB: 1
+
+databases:
+  - name: elbambinodaniel-db
+    plan: free
+    databaseName: elbambinodaniel
+    user: elbambinodaniel
