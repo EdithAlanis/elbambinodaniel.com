@@ -1,24 +1,22 @@
-EL BAMBINO DANIEL — VERSIÓN PARA VENTA INMEDIATA
+EL BAMBINO DANIEL — ACCESO MÓVIL FINAL
 
-INCLUYE
-- Sitio sin franjas de prueba.
-- Logo integrado.
-- Catálogo y carrito.
-- Guantes por talla.
-- PDF del pedido.
-- Envío inmediato a WhatsApp.
-- Panel privado con teclado numérico interno.
-- Pedidos pendientes, histórico y botón Atendido.
+FUNCIONAMIENTO
+- En la tienda aparece el botón “REVISAR PEDIDOS”.
+- Al tocarlo desde celular o computadora abre panel-pedidos.html.
+- La clave se captura tocando botones numéricos dentro de la página.
+- No existe un campo de texto, por lo que no debe abrirse el teclado del celular.
+- La dirección antigua admin.html redirige automáticamente al panel nuevo.
 
 SUBIR
-1. Extraiga el ZIP.
-2. Suba TODOS los archivos a la raíz de GitHub.
-3. Reemplace los anteriores.
-4. Presione Commit changes.
-5. Espere 1 a 3 minutos.
-6. Abra https://elbambinodaniel.com/?v=5
-7. Presione Ctrl + F5 una sola vez.
+1. Suba TODOS los archivos de este ZIP a la raíz del repositorio.
+2. Reemplace los archivos existentes.
+3. Presione Commit changes.
+4. Espere de 1 a 3 minutos.
+5. Abra https://elbambinodaniel.com/?acceso=movil
+6. Toque el botón REVISAR PEDIDOS.
 
-IMPORTANTE
-Esta versión prioriza que los clientes puedan hacer pedidos ahora mismo y enviarlos por WhatsApp.
-El panel estático muestra pedidos guardados en el mismo navegador.
+ACCESO DIRECTO
+https://elbambinodaniel.com/panel-pedidos.html?acceso=movil
+
+NOTA DE SEGURIDAD
+La clave evita el acceso casual, pero al ser una página estática no equivale a una autenticación de servidor.

@@ -1,0 +1,2 @@
+window.ORDER_API_URL = "";
+window.EL_BAMBINO_WHATSAPP = "523331191167";
