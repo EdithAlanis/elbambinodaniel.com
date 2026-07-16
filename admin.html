@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Revisar pedidos | El Bambino Daniel</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+  <header class="admin-header">
+    <a href="index.html" class="admin-brand">
+      <img src="logo-el-bambino-daniel.png" alt="El Bambino Daniel">
+      <div><strong>EL BAMBINO DANIEL</strong><span>Panel privado de pedidos</span></div>
+    </a>
+    <a class="btn btn-light" href="index.html">Regresar a la tienda</a>
+  </header>
+
+  <main class="admin-main">
+    <section id="loginPanel" class="admin-login-card">
+      <span class="eyebrow">Acceso restringido</span>
+      <h1>Revisar pedidos</h1>
+      <p>Ingrese la clave para consultar pedidos pendientes e históricos.</p>
+      <form id="loginForm">
+        <label>Clave de acceso
+          <input id="adminPin" type="password" inputmode="numeric" maxlength="8" required autocomplete="current-password">
+        </label>
+        <button class="btn btn-primary btn-full" type="submit">Entrar</button>
+        <p id="loginError" class="admin-error" hidden>Clave incorrecta o servidor no disponible.</p>
+      </form>
+    </section>
+
+    <section id="ordersPanel" class="orders-panel" hidden>
+      <div class="orders-toolbar">
+        <div>
+          <span class="eyebrow">Administración</span>
+          <h1>Pedidos</h1>
+        </div>
+        <button id="logoutButton" class="btn btn-light" type="button">Cerrar sesión</button>
+      </div>
+
+      <div class="orders-tabs">
+        <button class="orders-tab active" data-status="pending" type="button">Pendientes <span id="pendingCount">0</span></button>
+        <button class="orders-tab" data-status="attended" type="button">Histórico <span id="historyCount">0</span></button>
+      </div>
+
+      <div id="ordersMessage" class="admin-info" hidden></div>
+      <div id="ordersList" class="orders-list"></div>
+    </section>
+  </main>
+
+  <section id="orderModal" class="admin-modal" hidden>
+    <div class="admin-modal-card">
+      <button id="closeOrderModal" class="icon-button admin-modal-close" type="button">×</button>
+      <div id="orderDetail"></div>
+    </div>
+  </section>
+
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

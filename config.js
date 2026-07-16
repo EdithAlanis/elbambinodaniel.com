@@ -1,3 +1,4 @@
-// Coloque aquí la dirección pública del servidor privado una vez desplegado.
-// Ejemplo: window.ORDER_API_URL = "https://pedidos.elbambinodaniel.com/api/orders";
+// Coloque aquí la dirección pública de su servidor privado.
+// Ejemplo:
+// window.ORDER_API_URL = "https://pedidos.elbambinodaniel.com";
 window.ORDER_API_URL = "";

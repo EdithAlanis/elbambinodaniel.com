@@ -38,8 +38,12 @@ const PRODUCTS = [
   {id:'p-tubo-rojo',name:'Tubo rojo',detail:'Caja con 100 piezas',price:220,category:'Otros productos',icon:'🧪'},
   {id:'p-tubo-lila',name:'Tubo lila',detail:'Caja con 100 piezas',price:280,category:'Otros productos',icon:'🧪'},
   {id:'p-cofias',name:'Paquete de cofias',detail:'Paquete con 100 piezas',price:160,category:'Otros productos',icon:'🥼'},
-  {id:'p-guantes-nitrilo',name:'Guantes de nitrilo',detail:'Caja',price:160,category:'Otros productos',icon:'🧤'},
-  {id:'p-guantes-esteril',name:'Guantes Ambiderm estériles',detail:'Caja',price:160,category:'Otros productos',icon:'🧤'},
+  {id:'p-guantes-nitrilo-chico',name:'Guantes de nitrilo chicos',detail:'Caja',price:160,category:'Otros productos',icon:'🧤'},
+  {id:'p-guantes-nitrilo-mediano',name:'Guantes de nitrilo medianos',detail:'Caja',price:160,category:'Otros productos',icon:'🧤'},
+  {id:'p-guantes-nitrilo-grande',name:'Guantes de nitrilo grandes',detail:'Caja',price:160,category:'Otros productos',icon:'🧤'},
+  {id:'p-guantes-ambiderm-chico',name:'Guantes Ambiderm estériles chicos',detail:'Caja',price:160,category:'Otros productos',icon:'🧤'},
+  {id:'p-guantes-ambiderm-mediano',name:'Guantes Ambiderm estériles medianos',detail:'Caja',price:160,category:'Otros productos',icon:'🧤'},
+  {id:'p-guantes-ambiderm-grande',name:'Guantes Ambiderm estériles grandes',detail:'Caja',price:160,category:'Otros productos',icon:'🧤'},
   {id:'p-baumanometro-escritorio',name:'Baumanómetro de escritorio',detail:'Equipo médico',price:220,category:'Otros productos',icon:'🩺'},
   {id:'p-baumanometro-pulsera',name:'Baumanómetro de pulsera',detail:'Equipo médico',price:240,category:'Otros productos',icon:'⌚'},
   {id:'p-termometro-nino',name:'Termómetro para niño',detail:'Equipo médico',price:55,category:'Otros productos',icon:'🌡️'},
@@ -178,13 +182,13 @@ function buildOrderPdf(order){
 }
 
 async function sendOrderAutomatically(order){
-  const apiUrl=(window.ORDER_API_URL||'').trim();
+  const apiUrl=(window.ORDER_API_URL||'').trim().replace(/\/$/,'');
   if(!apiUrl){
     const pdf=buildOrderPdf(order);
     if(pdf) pdf.save(`${order.folio}.pdf`);
     return {sent:false,reason:'API_NOT_CONFIGURED'};
   }
-  const response=await fetch(apiUrl,{
+  const response=await fetch(`${apiUrl}/api/orders`,{
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify(order)
