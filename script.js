@@ -190,7 +190,28 @@ async function sendOrderAutomatically(order){
   if(!apiUrl){
     const pdf=buildOrderPdf(order);
     if(pdf) pdf.save(`${order.folio}.pdf`);
-    return {sent:false,reason:'API_NOT_CONFIGURED'};
+    const phone=(window.EL_BAMBINO_WHATSAPP||'').replace(/\D/g,'');
+    const products=(order.productos||[]).map(p=>`• ${p.nombre} x ${p.cantidad}`).join('\n');
+    const text=[
+      'NUEVO PEDIDO EN ELBAMBINODANIEL.COM',
+      `Folio: ${order.folio}`,
+      `Cliente: ${order.cliente.nombre}`,
+      `Teléfono: ${order.cliente.telefono}`,
+      `Domicilio: ${order.cliente.domicilio}, ${order.cliente.colonia}, ${order.cliente.ciudad}, ${order.cliente.estado}, C.P. ${order.cliente.cp}`,
+      `Horario: ${order.cliente.horario}`,
+      `Cierra al mediodía: ${order.cliente.cierra}`,
+      `Pago: ${order.cliente.pago}`,
+      '',
+      'Productos:',
+      products,
+      '',
+      `Total estimado: ${money(order.subtotalEstimado)}`,
+      `Observaciones: ${order.cliente.observaciones||'Sin observaciones'}`
+    ].join('\n');
+    if(phone){
+      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`,'_blank','noopener');
+    }
+    return {sent:true,local:true};
   }
   const response=await fetch(`${apiUrl}/api/orders`,{
     method:'POST',
@@ -213,7 +234,7 @@ function setupCheckout(){
       const items=cartEntries();
       const subtotal=items.reduce((s,x)=>s+x.product.price*x.qty,0);
       const folio=`EBD-${new Date().toISOString().slice(0,10).replaceAll('-','')}-${Math.random().toString(36).slice(2,7).toUpperCase()}`;
-      const order={folio,fecha:new Date().toISOString(),cliente:data,productos:items.map(x=>({id:x.product.id,nombre:x.product.name,cantidad:x.qty,precioEstimado:x.product.price})),subtotalEstimado:subtotal,estado:'Pedido recibido',avisoPrecio:'El precio final se confirma cuando el producto llega desde almacén.'};
+      const order={folio,fecha:new Date().toISOString(),status:'pending',cliente:data,productos:items.map(x=>({id:x.product.id,nombre:x.product.name,cantidad:x.qty,precioEstimado:x.product.price})),subtotalEstimado:subtotal,estado:'Pedido recibido',avisoPrecio:'El precio final se confirma cuando el producto llega desde almacén.'};
       const result=await sendOrderAutomatically(order);
       const orders=JSON.parse(localStorage.getItem('elbambino-orders')||'[]');orders.unshift(order);localStorage.setItem('elbambino-orders',JSON.stringify(orders));
       closePanel('checkoutDrawer');state.cart={};saveCart();renderCart();e.currentTarget.reset();
@@ -221,7 +242,7 @@ function setupCheckout(){
         $('#overlay').hidden=false;$('#successModal').hidden=false;$('#orderNumber').textContent=folio;
         const msg=$('#successModal p');
         if(result.sent===false){
-          msg.textContent='El pedido y su PDF fueron generados. La conexión automática de WhatsApp todavía requiere activar el servidor privado.';
+          msg.textContent='El pedido quedó registrado. Se abrió WhatsApp con la información; presione Enviar para confirmar el aviso.';
         }else{
           msg.textContent='El pedido fue enviado automáticamente y quedó registrado con su folio.';
         }
@@ -234,8 +255,22 @@ function setupCheckout(){
   });
 }
 
+
+function setupVisitorCounter(){
+  const key='elbambino-visitor-count';
+  const sessionKey='elbambino-visitor-session';
+  let count=Number(localStorage.getItem(key)||0);
+  if(!sessionStorage.getItem(sessionKey)){
+    count+=1;
+    localStorage.setItem(key,String(count));
+    sessionStorage.setItem(sessionKey,'1');
+  }
+  const el=document.getElementById('visitorCount');
+  if(el) el.textContent=new Intl.NumberFormat('es-MX').format(count);
+}
+
 function init(){
-  populateCategories();renderProducts();renderCart();setupOffers();setupSearch();setupCheckout();
+  populateCategories();renderProducts();renderCart();setupOffers();setupSearch();setupCheckout();setupVisitorCounter();
   $('#categoryFilter').onchange=e=>{state.category=e.target.value;state.page=1;renderProducts()};
   $$('.category-card').forEach(b=>b.onclick=()=>{state.category=b.dataset.category;state.page=1;$('#categoryFilter').value=state.category;renderProducts();document.querySelector('#productos').scrollIntoView()});
   $$('.quick-add').forEach(b=>b.onclick=()=>addToCart(b.dataset.productId,1));

@@ -32,3 +32,8 @@
   .catalog-table th,.catalog-table td{padding:6px 8px!important;font-size:11px}
   .catalog-table td:first-child{min-width:260px}
 }
+
+.brand img{width:86px;height:70px;object-fit:contain}
+.brand small{display:block;max-width:180px;line-height:1.2;font-size:11px;font-weight:700}
+.visitor-counter{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 20px;background:#0a2854;color:#fff;font-size:14px}
+.visitor-counter strong{display:inline-grid;place-items:center;min-width:48px;padding:5px 10px;border-radius:999px;background:#fff;color:#0a2854;font-size:17px}

@@ -1,4 +1,3 @@
-// Coloque aquí la dirección pública de su servidor privado.
-// Ejemplo:
-// window.ORDER_API_URL = "https://pedidos.elbambinodaniel.com";
 window.ORDER_API_URL = "";
+window.EL_BAMBINO_ADMIN_PIN = "2222";
+window.EL_BAMBINO_WHATSAPP = "523331191167";

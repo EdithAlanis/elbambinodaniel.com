@@ -1,13 +1,18 @@
 
 const API_BASE=(window.ORDER_API_URL||'').replace(/\/$/,'');
+const ADMIN_PIN=String(window.EL_BAMBINO_ADMIN_PIN||'2222');
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const money=n=>new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(Number(n||0));
 let currentStatus='pending';
 
 function pin(){return sessionStorage.getItem('elbambino-admin-pin')||''}
+function localOrders(){
+  try{return JSON.parse(localStorage.getItem('elbambino-orders')||'[]')}
+  catch(_){return []}
+}
+function saveLocalOrders(orders){localStorage.setItem('elbambino-orders',JSON.stringify(orders))}
 function api(path,options={}){
-  if(!API_BASE) throw new Error('El servidor privado no está configurado.');
   return fetch(`${API_BASE}${path}`,{
     ...options,
     headers:{'Content-Type':'application/json','X-Admin-Pin':pin(),...(options.headers||{})}
@@ -18,23 +23,44 @@ function api(path,options={}){
   });
 }
 async function login(testPin){
-  sessionStorage.setItem('elbambino-admin-pin',testPin);
-  await api('/api/admin/session');
+  if(API_BASE){
+    sessionStorage.setItem('elbambino-admin-pin',testPin);
+    await api('/api/admin/session');
+  }else{
+    if(String(testPin)!==ADMIN_PIN) throw new Error('Clave incorrecta');
+    sessionStorage.setItem('elbambino-admin-pin',testPin);
+  }
   $('#loginPanel').hidden=true;$('#ordersPanel').hidden=false;
   await loadCounts();await loadOrders(currentStatus);
 }
 async function loadCounts(){
-  const data=await api('/api/admin/counts');
-  $('#pendingCount').textContent=data.pending||0;
-  $('#historyCount').textContent=data.attended||0;
+  if(API_BASE){
+    const data=await api('/api/admin/counts');
+    $('#pendingCount').textContent=data.pending||0;
+    $('#historyCount').textContent=data.attended||0;
+  }else{
+    const orders=localOrders();
+    $('#pendingCount').textContent=orders.filter(o=>(o.status||'pending')==='pending').length;
+    $('#historyCount').textContent=orders.filter(o=>o.status==='attended').length;
+  }
+}
+async function getOrders(status){
+  if(API_BASE) return (await api(`/api/admin/orders?status=${encodeURIComponent(status)}`)).orders;
+  return localOrders().filter(o=>(o.status||'pending')===status);
+}
+async function getOrder(folio){
+  if(API_BASE) return api(`/api/admin/orders/${encodeURIComponent(folio)}`);
+  const found=localOrders().find(o=>o.folio===folio);
+  if(!found) throw new Error('Pedido no encontrado');
+  return found;
 }
 async function loadOrders(status){
   currentStatus=status;
   $$('.orders-tab').forEach(b=>b.classList.toggle('active',b.dataset.status===status));
   const box=$('#ordersList');box.innerHTML='<div class="admin-info">Cargando pedidos...</div>';
-  const data=await api(`/api/admin/orders?status=${encodeURIComponent(status)}`);
-  if(!data.orders.length){box.innerHTML='<div class="admin-info">No hay pedidos en esta sección.</div>';return}
-  box.innerHTML=data.orders.map(o=>`<article class="order-card">
+  const orders=await getOrders(status);
+  if(!orders.length){box.innerHTML='<div class="admin-info">No hay pedidos en esta sección.</div>';return}
+  box.innerHTML=orders.map(o=>`<article class="order-card">
     <div><h3>${o.folio}</h3><p>${o.cliente?.nombre||''}</p></div>
     <div><small>Fecha</small><p>${new Date(o.fecha).toLocaleString('es-MX')}</p></div>
     <div><small>Total estimado</small><p><strong>${money(o.subtotalEstimado)}</strong></p></div>
@@ -44,7 +70,7 @@ async function loadOrders(status){
   $$('[data-view]').forEach(b=>b.onclick=()=>viewOrder(b.dataset.view));
 }
 async function viewOrder(folio){
-  const o=await api(`/api/admin/orders/${encodeURIComponent(folio)}`);
+  const o=await getOrder(folio);
   const products=(o.productos||[]).map(p=>`<tr><td>${p.nombre}</td><td>${p.cantidad}</td><td>${money(p.precioEstimado)}</td><td>${money(Number(p.precioEstimado)*Number(p.cantidad))}</td></tr>`).join('');
   $('#orderDetail').innerHTML=`<span class="eyebrow">Pedido ${o.status==='attended'?'histórico':'pendiente'}</span>
     <h2>${o.folio}</h2>
@@ -69,7 +95,14 @@ async function viewOrder(folio){
   const attended=$('#markAttended');
   if(attended) attended.onclick=async()=>{
     if(!confirm('¿Marcar este pedido como atendido y enviarlo al histórico?')) return;
-    await api(`/api/admin/orders/${encodeURIComponent(folio)}/attended`,{method:'POST'});
+    if(API_BASE){
+      await api(`/api/admin/orders/${encodeURIComponent(folio)}/attended`,{method:'POST'});
+    }else{
+      const orders=localOrders();
+      const item=orders.find(o=>o.folio===folio);
+      if(item)item.status='attended';
+      saveLocalOrders(orders);
+    }
     $('#orderModal').hidden=true;await loadCounts();await loadOrders(currentStatus);
   };
 }
