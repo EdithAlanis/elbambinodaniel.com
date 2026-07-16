@@ -1,4 +1,4 @@
-const PRODUCTS = [...(window.BASIC_PRODUCTS||[]),
+const PRODUCTOS = [...(ventana.BASIC_PRODUCTS||[]),
 
   {id:'guante-nitrilo-chico',name:'Guantes de nitrilo talla chica',detail:'Caja, talla chica',price:0,category:'Guantes',icon:'🧤'},
   {id:'guante-nitrilo-mediano',name:'Guantes de nitrilo talla mediana',detail:'Caja, talla mediana',price:0,category:'Guantes',icon:'🧤'},
@@ -263,83 +263,83 @@ function setupCheckout(){
 }
 
 
-function setupVisitorCounter(){
-  const key='elbambino-visitor-count';
-  const sessionKey='elbambino-visitor-session';
-  let count=Number(localStorage.getItem(key)||0);
-  if(!sessionStorage.getItem(sessionKey)){
-    count+=1;
-    localStorage.setItem(key,String(count));
-    sessionStorage.setItem(sessionKey,'1');
+función configuraciónVisitorCounter(){
+  constante llave='elbambino-recuento-de-visitantes';
+  constante clave de sesión='sesión-de-visitante-elbambino';
+  dejar contar=Número(almacenamiento local.obtener artículo(llave)||0);
+  si(!sesiónAlmacenamiento.obtener artículo(clave de sesión)){
+    contar+=1;
+    almacenamiento local.establecer artículo(llave,Cadena(contar));
+    sesiónAlmacenamiento.establecer artículo(clave de sesión,'1');
   }
-  const el=document.getElementById('visitorCount');
-  if(el) el.textContent=new Intl.NumberFormat('es-MX').format(count);
+  constante el=documento.obtenerElementoPorId('visitanteCount');
+  si(el) el.contenido de texto=nuevo Internacional.Formato de número('es-MX').formato(contar);
 }
 
-function init(){
-  populateCategories();renderProducts();renderCart();setupOffers();setupSearch();setupCheckout();setupVisitorCounter();
-  $('#categoryFilter').onchange=e=>{state.category=e.target.value;state.page=1;renderProducts()};
-  $$('.category-card').forEach(b=>b.onclick=()=>{state.category=b.dataset.category;state.page=1;$('#categoryFilter').value=state.category;renderProducts();document.querySelector('#productos').scrollIntoView()});
-  $$('.quick-add').forEach(b=>b.onclick=()=>addToCart(b.dataset.productId,1));
-  $('#cartButton').onclick=()=>openPanel('cartDrawer');
-  $$('[data-close]').forEach(b=>b.onclick=()=>{const id=b.dataset.close;document.getElementById(id).classList.contains('drawer')?closePanel(id):closeModal(id)});
-  $('#overlay').onclick=()=>{$$('.drawer.open').forEach(d=>closePanel(d.id));if(!$('#successModal').hidden)closeModal('successModal')};
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'){$$('.drawer.open').forEach(d=>closePanel(d.id));if(!$('#successModal').hidden)closeModal('successModal')}});
+función calor(){
+  poblarCategorías();renderProductos();renderCarrito();configuraciónOfertas();configuraciónBuscar();configuraciónPagar();configuraciónVisitorCounter();
+  $('#filtrocategoría').en cambio=y=>{estado.categoría=y.objetivo.valor;estado.página=1;renderProductos()};
+  $$('.tarjeta-categoría').para cada uno(b=>b.al hacer clic=()=>{estado.categoría=b.conjunto de datos.categoría;estado.página=1;$('#filtrocategoría').valor=estado.categoría;renderProductos();documento.selector de consulta('#productos').desplazarse hacia la vista()});
+  $$('.agregación rápida').para cada uno(b=>b.al hacer clic=()=>añadir a la cesta(b.conjunto de datos.ID de producto,1));
+  $('#botóncarro').al hacer clic=()=>panel abierto('cajón del carrito');
+  $$('[cierre de datos]').para cada uno(b=>b.al hacer clic=()=>{constante identificación=b.conjunto de datos.cerca;documento.obtenerElementoPorId(identificación).lista de clases.contiene('cajón')?cerrarPanel(identificación):cerrarModal(identificación)});
+  $('#cubrir').al hacer clic=()=>{$$('.drawer.open').para cada uno(d=>cerrarPanel(d.identificación));si(!$('#éxitoModal').oculto)cerrarModal('éxitoModal')};
+  documento.agregarEventListener('pulsación de tecla',y=>{si(y.llave==='Escapar'){$$('.drawer.open').para cada uno(d=>cerrarPanel(d.identificación));si(!$('#éxitoModal').oculto)cerrarModal('éxitoModal')}});
 }
 
-document.addEventListener('DOMContentLoaded',init);
+documento.agregarEventListener('DOMContenidoCargado',calor);
 
-async function sendOrder(order){
-  const apiUrl=(window.ORDER_API_URL||'').replace(/\/$/,'');
-  const phone=(window.EL_BAMBINO_WHATSAPP||'523331191167').replace(/\D/g,'');
-  const products=(order.productos||[]).map(p=>`• ${p.nombre} x ${p.cantidad}`).join('\n');
-  const text=[
+asíncrono función enviarPedido(orden){
+  constante URL de API=(ventana.ORDER_API_URL||'').reemplazar(/\/$/,'');
+  constante teléfono=(ventana.EL_BAMBINO_WHATSAPP||'523331191167').reemplazar(/\D/g,'');
+  constante productos=(orden.productos||[]).mapa(pag=>`• ${pag.nombre} incógnita ${pag.cantidad}`).unirse('\norte');
+  constante texto=[
     'NUEVO PEDIDO EN ELBAMBINODANIEL.COM',
-    `Folio: ${order.folio}`,
-    `Cliente: ${order.cliente.nombre}`,
-    `Teléfono: ${order.cliente.telefono}`,
-    `Domicilio: ${order.cliente.domicilio}, ${order.cliente.colonia}, ${order.cliente.ciudad}, ${order.cliente.estado}, C.P. ${order.cliente.cp}`,
-    `Horario: ${order.cliente.horario}`,
-    `Cierra al mediodía: ${order.cliente.cierra}`,
-    `Pago: ${order.cliente.pago}`,
+    `Folio: ${orden.folio}`,
+    `Cliente: ${orden.cliente.nombre}`,
+    `Teléfono: ${orden.cliente.teléfono}`,
+    `Domicilio: ${orden.cliente.domicilio}, ${orden.cliente.colonia}, ${orden.cliente.ciudad}, ${orden.cliente.estado}, C.P. ${orden.cliente.CP}`,
+    `Horario: ${orden.cliente.horario}`,
+    `Cierra al mediodía: ${orden.cliente.cierra}`,
+    `Pago: ${orden.cliente.pago}`,
     '',
     'Productos:',
-    products,
+    productos,
     '',
-    `Total estimado: ${money(order.subtotalEstimado)}`,
-    `Observaciones: ${order.cliente.observaciones||'Sin observaciones'}`
-  ].join('\n');
+    `Total estimado: ${dinero(orden.subtotalEstimado)}`,
+    `Observaciones: ${orden.cliente.observaciones||'Sin observaciones'}`
+  ].unirse('\norte');
 
-  if(apiUrl && !apiUrl.includes('TU-SERVIDOR')){
-    const response=await fetch(`${apiUrl}/api/orders`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(order)
+  si(URL de API && !URL de API.incluye('TU-SERVIDOR')){
+    constante respuesta=esperar buscar(`${URL de API}/api/orders`,{
+      método:'CORREO',
+      encabezados:{'Tipo de contenido':'aplicación/json'},
+      cuerpo:JSON.encadenar(orden)
     });
-    if(!response.ok){
-      const data=await response.json().catch(()=>({}));
-      throw new Error(data.error||'No fue posible guardar el pedido.');
+    si(!respuesta.OK){
+      constante datos=esperar respuesta.json().atrapar(()=>({}));
+      tirar nuevo Error(datos.error||'No fue posible guardar el pedido.');
     }
-  }else{
-    const orders=JSON.parse(localStorage.getItem('elbambino-orders')||'[]');
-    orders.unshift(order);
-    localStorage.setItem('elbambino-orders',JSON.stringify(orders));
+  }demás{
+    constante pedidos=JSON.analizar gramaticalmente(almacenamiento local.obtener artículo('órdenes-elbambino')||'[]');
+    pedidos.desacelerar(orden);
+    almacenamiento local.establecer artículo('órdenes-elbambino',JSON.encadenar(pedidos));
   }
 
-  const pdf=buildOrderPdf(order);
-  if(pdf) pdf.save(`${order.folio}.pdf`);
-  window.location.href=`https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
-  return {sent:true};
+  constante pdf=construirPedidoPdf(orden);
+  si(pdf) pdf.ahorrar(`${orden.folio}.pdf`);
+  ventana.ubicación.href=`https://wa.me/${teléfono}?texto=${codificarURIComponente(texto)}`;
+  devolver {enviado:verdadero};
 }
 
-async function registerGlobalVisit(){
-  const apiUrl=(window.ORDER_API_URL||'').replace(/\/$/,'');
-  if(!apiUrl || apiUrl.includes('TU-SERVIDOR')) return;
-  try{
-    const r=await fetch(`${apiUrl}/api/visits`,{method:'POST'});
-    const data=await r.json();
-    const el=document.getElementById('visitorCount');
-    if(el && data.total!=null) el.textContent=new Intl.NumberFormat('es-MX').format(data.total);
-  }catch(_){}
+asíncrono función registrarseGlobalVisita(){
+  constante URL de API=(ventana.ORDER_API_URL||'').reemplazar(/\/$/,'');
+  si(!URL de API || URL de API.incluye('TU-SERVIDOR')) devolver;
+  intentar{
+    constante r=esperar buscar(`${URL de API}/api/visitas`,{método:'CORREO'});
+    constante datos=esperar r.json();
+    constante el=documento.obtenerElementoPorId('visitanteCount');
+    si(el && datos.total!=nulo) el.contenido de texto=nuevo Internacional.Formato de número('es-MX').formato(datos.total);
+  }atrapar(_){}
 }
-document.addEventListener('DOMContentLoaded',registerGlobalVisit);
+documento.agregarEventListener('DOMContenidoCargado',registrarseGlobalVisita);
