@@ -8,6 +8,7 @@ const PRODUCTS = [...(window.BASIC_PRODUCTS||[]),
   {id:'guante-ambiderm-grande',name:'Guantes Ambiderm estériles talla grande',detail:'Talla grande',price:0,category:'Guantes',icon:'🧤'},
 
 
+  {id:'p-tramadol-adiolol-100',name:'Tramadol cápsulas 100 mg ADIOL',detail:'Caja con 10 cápsulas · Requiere receta médica',price:75,category:'Medicamento especial',icon:'🔒',special:true},
   {id:'p-alprazolam025',name:'Alprazolam 0.25 mg',detail:'Caja con 30 tabletas',price:145,category:'Medicamento especial',icon:'🔒',special:true},
   {id:'p-alprazolam05',name:'Alprazolam 0.50 mg',detail:'Caja con 30 tabletas',price:202,category:'Medicamento especial',icon:'🔒',special:true},
   {id:'p-alprazolam1',name:'Alprazolam 1 mg',detail:'Caja con 30 tabletas',price:174,category:'Medicamento especial',icon:'🔒',special:true},
