@@ -26,3 +26,7 @@
 .detail-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
 @media(max-width:850px){.order-card{grid-template-columns:1fr 1fr}.order-card .order-actions{grid-column:1/-1}.detail-grid{grid-template-columns:1fr}}
 @media(max-width:520px){.admin-header{align-items:flex-start}.admin-brand span{display:none}.order-card{grid-template-columns:1fr}.order-card .order-actions{grid-column:auto}.orders-toolbar{align-items:flex-start}.orders-tabs{overflow:auto}}
+
+#adminPin{background:#fff!important;color:#111!important;-webkit-text-security:disc!important;appearance:none!important}
+#adminPin::-ms-reveal,#adminPin::-ms-clear{display:none!important}
+#directLoginButton{font-size:18px;font-weight:900}

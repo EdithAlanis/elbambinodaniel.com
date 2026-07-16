@@ -17,16 +17,16 @@
     <a class="btn btn-light" href="index.html">Regresar a la tienda</a>
   </header>
 
-  <main class="admin-main">
+  <div class="version-ribbon">VERSIÓN 3 · ACCESO CORREGIDO</div><main class="admin-main">
     <section id="loginPanel" class="admin-login-card">
       <span class="eyebrow">Acceso restringido</span>
       <h1>Revisar pedidos</h1>
       <p>Ingrese la clave <strong>2222</strong> para consultar pedidos pendientes e históricos.</p>
-      <form id="loginForm">
-        <label>Clave de acceso
-          <input id="adminPin" type="password" inputmode="numeric" maxlength="8" required autocomplete="current-password">
+      <form id="loginForm" autocomplete="off">
+        <label>Clave de acceso <small style="display:block;font-weight:400;margin-top:5px">Escriba 2222</small>
+          <input id="adminPin" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" required autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="clave-el-bambino">
         </label>
-        <button class="btn btn-primary btn-full" type="submit">ENTRAR A PEDIDOS</button>
+        <button id="directLoginButton" class="btn btn-primary btn-full" type="button">ENTRAR A PEDIDOS</button>
         <p id="loginError" class="admin-error" hidden>Clave incorrecta o servidor no disponible.</p>
       </form>
     </section>

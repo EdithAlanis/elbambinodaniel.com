@@ -1,5 +1,13 @@
 const PRODUCTS = [...(window.BASIC_PRODUCTS||[]),
 
+  {id:'guante-nitrilo-chico',name:'Guantes de nitrilo talla chica',detail:'Caja, talla chica',price:0,category:'Guantes',icon:'🧤'},
+  {id:'guante-nitrilo-mediano',name:'Guantes de nitrilo talla mediana',detail:'Caja, talla mediana',price:0,category:'Guantes',icon:'🧤'},
+  {id:'guante-nitrilo-grande',name:'Guantes de nitrilo talla grande',detail:'Caja, talla grande',price:0,category:'Guantes',icon:'🧤'},
+  {id:'guante-ambiderm-chico',name:'Guantes Ambiderm estériles talla chica',detail:'Talla chica',price:0,category:'Guantes',icon:'🧤'},
+  {id:'guante-ambiderm-mediano',name:'Guantes Ambiderm estériles talla mediana',detail:'Talla mediana',price:0,category:'Guantes',icon:'🧤'},
+  {id:'guante-ambiderm-grande',name:'Guantes Ambiderm estériles talla grande',detail:'Talla grande',price:0,category:'Guantes',icon:'🧤'},
+
+
   {id:'p-alprazolam025',name:'Alprazolam 0.25 mg',detail:'Caja con 30 tabletas',price:145,category:'Medicamento especial',icon:'🔒',special:true},
   {id:'p-alprazolam05',name:'Alprazolam 0.50 mg',detail:'Caja con 30 tabletas',price:202,category:'Medicamento especial',icon:'🔒',special:true},
   {id:'p-alprazolam1',name:'Alprazolam 1 mg',detail:'Caja con 30 tabletas',price:174,category:'Medicamento especial',icon:'🔒',special:true},
