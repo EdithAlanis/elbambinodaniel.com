@@ -198,7 +198,7 @@ async function sendOrderAutomatically(order){
   if(!apiUrl){
     const pdf=buildOrderPdf(order);
     if(pdf) pdf.save(`${order.folio}.pdf`);
-    const phone=(window.EL_BAMBINO_WHATSAPP||'').replace(/\D/g,'');
+    const phone=(window.EL_BAMBINO_WHATSAPP||'523331191167').replace(/\D/g,'');
     const products=(order.productos||[]).map(p=>`• ${p.nombre} x ${p.cantidad}`).join('\n');
     const text=[
       'NUEVO PEDIDO EN ELBAMBINODANIEL.COM',
@@ -216,9 +216,8 @@ async function sendOrderAutomatically(order){
       `Total estimado: ${money(order.subtotalEstimado)}`,
       `Observaciones: ${order.cliente.observaciones||'Sin observaciones'}`
     ].join('\n');
-    if(phone){
-      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`,'_blank','noopener');
-    }
+    const whatsappUrl=`https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+    setTimeout(()=>{ window.location.href=whatsappUrl; },250);
     return {sent:true,local:true};
   }
   const response=await fetch(`${apiUrl}/api/orders`,{

@@ -30,3 +30,13 @@
 #adminPin{background:#fff!important;color:#111!important;-webkit-text-security:disc!important;appearance:none!important}
 #adminPin::-ms-reveal,#adminPin::-ms-clear{display:none!important}
 #directLoginButton{font-size:18px;font-weight:900}
+
+.pin-login{display:grid;gap:16px;margin-top:20px}
+.pin-instruction{margin:0;color:var(--muted)}
+.pin-display{height:62px;display:grid;place-items:center;border:2px solid #ccd7e5;border-radius:14px;background:#fff;font-size:30px;letter-spacing:.35em;color:var(--navy);font-weight:900}
+.pin-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pin-key{min-height:58px;border:1px solid #ccd7e5;border-radius:12px;background:#fff;color:var(--navy);font-size:22px;font-weight:900;cursor:pointer}
+.pin-key:hover,.pin-key:focus{background:#eaf4ff;border-color:#0e5fc5}
+.pin-clear{font-size:14px;background:#fff7f7;color:#a91626}
+.pin-back{background:#f6f9fd}
+#directLoginButton{min-height:58px;font-size:18px;font-weight:900}

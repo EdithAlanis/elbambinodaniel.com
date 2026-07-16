@@ -1,20 +1,24 @@
-EL BAMBINO DANIEL — VERSIÓN 3
+EL BAMBINO DANIEL — VERSIÓN PARA VENTA INMEDIATA
 
-CORRECCIONES
-- El campo de acceso ya no activa el administrador de contraseñas de Microsoft Edge.
-- Clave: 2222.
-- Botón directo para entrar a pedidos.
-- Guantes visibles como categoría independiente.
-- Seis productos de guantes por talla:
-  Nitrilo chico, mediano y grande.
-  Ambiderm estéril chico, mediano y grande.
+INCLUYE
+- Sitio sin franjas de prueba.
+- Logo integrado.
+- Catálogo y carrito.
+- Guantes por talla.
+- PDF del pedido.
+- Envío inmediato a WhatsApp.
+- Panel privado con teclado numérico interno.
+- Pedidos pendientes, histórico y botón Atendido.
 
-SUBIR A GITHUB
-1. Reemplace todos los archivos anteriores con los de este ZIP.
-2. Confirme con Commit changes.
-3. Espere 2 minutos.
-4. Abra https://elbambinodaniel.com/?v=3
-5. Presione Ctrl + F5.
+SUBIR
+1. Extraiga el ZIP.
+2. Suba TODOS los archivos a la raíz de GitHub.
+3. Reemplace los anteriores.
+4. Presione Commit changes.
+5. Espere 1 a 3 minutos.
+6. Abra https://elbambinodaniel.com/?v=5
+7. Presione Ctrl + F5 una sola vez.
 
 IMPORTANTE
-El panel estático muestra pedidos guardados en el mismo navegador. Para reunir pedidos de todos los clientes en una sola base de datos hace falta publicar un backend privado.
+Esta versión prioriza que los clientes puedan hacer pedidos ahora mismo y enviarlos por WhatsApp.
+El panel estático muestra pedidos guardados en el mismo navegador.

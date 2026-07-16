@@ -38,6 +38,15 @@
 .visitor-counter{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 20px;background:#0a2854;color:#fff;font-size:14px}
 .visitor-counter strong{display:inline-grid;place-items:center;min-width:48px;padding:5px 10px;border-radius:999px;background:#fff;color:#0a2854;font-size:17px}
 
-.version-ribbon{background:#c62030;color:#fff;text-align:center;font-weight:900;padding:8px 12px;font-size:13px;letter-spacing:.03em}
+
 .admin-nav-link-prominent{background:#c62030!important;color:#fff!important;border-radius:12px;padding:12px 18px!important;box-shadow:0 8px 20px rgba(198,32,48,.25)}
 .category-card small{display:block;margin-top:5px;color:#68758a;font-size:12px}
+
+.order-ready-banner{
+  display:flex;justify-content:center;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:10px 20px;background:#eef6ff;border-bottom:1px solid #cfe0f5;
+  color:#0a2854;font-size:14px
+}
+.order-ready-banner strong{font-weight:900}
+.order-ready-banner span{color:#44566f}
+@media(max-width:700px){.order-ready-banner{text-align:center}}

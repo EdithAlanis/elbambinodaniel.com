@@ -4,19 +4,43 @@ const $$=s=>[...document.querySelectorAll(s)];
 const ADMIN_PIN='2222';
 const money=n=>new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(Number(n||0));
 let currentStatus='pending';
+let enteredPin='';
 
 function getOrders(){
   try{return JSON.parse(localStorage.getItem('elbambino-orders')||'[]')}
   catch(e){return []}
 }
-function saveOrders(orders){localStorage.setItem('elbambino-orders',JSON.stringify(orders))}
-
+function saveOrders(orders){
+  localStorage.setItem('elbambino-orders',JSON.stringify(orders));
+}
+function updatePinDisplay(){
+  const display=$('#pinDisplay');
+  if(!display)return;
+  const filled='●'.repeat(enteredPin.length);
+  const empty='○'.repeat(Math.max(0,4-enteredPin.length));
+  display.textContent=filled+empty;
+}
+function addDigit(digit){
+  if(enteredPin.length>=4)return;
+  enteredPin+=digit;
+  updatePinDisplay();
+  $('#loginError').hidden=true;
+}
+function clearPin(){
+  enteredPin='';
+  updatePinDisplay();
+  $('#loginError').hidden=true;
+}
+function backspacePin(){
+  enteredPin=enteredPin.slice(0,-1);
+  updatePinDisplay();
+  $('#loginError').hidden=true;
+}
 function openPanel(){
-  const value=String($('#adminPin').value||'').trim();
-  if(value!==ADMIN_PIN){
-    $('#loginError').textContent='Clave incorrecta. Escriba 2222.';
+  if(enteredPin!==ADMIN_PIN){
+    $('#loginError').textContent='Clave incorrecta.';
     $('#loginError').hidden=false;
-    $('#adminPin').focus();
+    clearPin();
     return;
   }
   sessionStorage.setItem('elbambino-admin-ok','1');
@@ -25,13 +49,11 @@ function openPanel(){
   loadCounts();
   loadOrders(currentStatus);
 }
-
 function loadCounts(){
   const orders=getOrders();
   $('#pendingCount').textContent=orders.filter(o=>(o.status||'pending')==='pending').length;
   $('#historyCount').textContent=orders.filter(o=>o.status==='attended').length;
 }
-
 function loadOrders(status){
   currentStatus=status;
   $$('.orders-tab').forEach(b=>b.classList.toggle('active',b.dataset.status===status));
@@ -50,12 +72,12 @@ function loadOrders(status){
   </article>`).join('');
   $$('[data-view]').forEach(b=>b.addEventListener('click',()=>viewOrder(b.dataset.view)));
 }
-
 function viewOrder(folio){
   const o=getOrders().find(x=>x.folio===folio);
   if(!o)return;
   const products=(o.productos||[]).map(p=>`<tr>
-    <td>${p.nombre||''}</td><td>${p.cantidad||0}</td>
+    <td>${p.nombre||''}</td>
+    <td>${p.cantidad||0}</td>
     <td>${money(p.precioEstimado||p.price||0)}</td>
     <td>${money(Number(p.precioEstimado||p.price||0)*Number(p.cantidad||0))}</td>
   </tr>`).join('');
@@ -69,7 +91,10 @@ function viewOrder(folio){
       <div class="detail-box"><strong>Ciudad y estado</strong>${o.cliente?.ciudad||''}, ${o.cliente?.estado||''}</div>
       <div class="detail-box"><strong>Pago</strong>${o.cliente?.pago||''}</div>
     </div>
-    <table class="detail-products"><thead><tr><th>Producto</th><th>Cantidad</th><th>Precio</th><th>Importe</th></tr></thead><tbody>${products}</tbody></table>
+    <table class="detail-products">
+      <thead><tr><th>Producto</th><th>Cantidad</th><th>Precio</th><th>Importe</th></tr></thead>
+      <tbody>${products}</tbody>
+    </table>
     <h3>Total estimado: ${money(o.subtotalEstimado)}</h3>
     <div class="detail-actions">
       <button class="btn btn-light" id="printOrder">Imprimir pedido</button>
@@ -88,29 +113,26 @@ function viewOrder(folio){
     loadOrders(currentStatus);
   };
 }
-
 document.addEventListener('DOMContentLoaded',()=>{
-  const input=$('#adminPin');
-  const button=$('#directLoginButton');
-  const form=$('#loginForm');
+  updatePinDisplay();
 
-  if(input){
-    input.value='';
-    setTimeout(()=>input.focus(),150);
-    input.addEventListener('keydown',e=>{
-      if(e.key==='Enter'){e.preventDefault();openPanel();}
-    });
-  }
-  if(button)button.addEventListener('click',openPanel);
-  if(form)form.addEventListener('submit',e=>{e.preventDefault();openPanel();});
+  $$('.pin-key[data-digit]').forEach(btn=>{
+    btn.addEventListener('click',()=>addDigit(btn.dataset.digit));
+  });
+  $('[data-action="clear"]')?.addEventListener('click',clearPin);
+  $('[data-action="back"]')?.addEventListener('click',backspacePin);
+  $('#directLoginButton')?.addEventListener('click',openPanel);
 
   $('#logoutButton').onclick=()=>{
     sessionStorage.removeItem('elbambino-admin-ok');
+    enteredPin='';
     location.reload();
   };
   $$('.orders-tab').forEach(b=>b.onclick=()=>loadOrders(b.dataset.status));
   $('#closeOrderModal').onclick=()=>$('#orderModal').hidden=true;
-  $('#orderModal').onclick=e=>{if(e.target.id==='orderModal')$('#orderModal').hidden=true};
+  $('#orderModal').onclick=e=>{
+    if(e.target.id==='orderModal')$('#orderModal').hidden=true;
+  };
 
   if(sessionStorage.getItem('elbambino-admin-ok')==='1'){
     $('#loginPanel').hidden=true;
