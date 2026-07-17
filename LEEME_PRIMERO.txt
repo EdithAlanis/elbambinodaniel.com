@@ -1,40 +1,47 @@
-EL BAMBINO DANIEL — CORREO AUTOMÁTICO DE PEDIDOS
+EL BAMBINO DANIEL — VERSIÓN FINAL CON CORREO AUTOMÁTICO
 
-ESTE ZIP SOLO ACTUALIZA EL BACKEND.
+ESTE ZIP INCLUYE
+- RAIZ_GITHUB/config-final.js
+  Mantiene visible la leyenda de entrega sin ocultar el carrito.
 
-ARCHIVOS A SUBIR
-1. Abra GitHub.
-2. Entre a la carpeta Backend.
-3. Use Add file > Upload files.
-4. Suba server.js y package.json.
-5. Reemplace los existentes.
-6. Presione Commit changes.
-7. Espere a que Render termine el despliegue.
+- Backend/server.js
+  Guarda los pedidos y envía aviso automático por correo.
 
-CONFIGURACIÓN EN RENDER
+- Backend/package.json
+  Incluye nodemailer para el envío de correo.
+
+PASO 1 — GITHUB
+A. En la raíz del repositorio:
+   Reemplace config-final.js con RAIZ_GITHUB/config-final.js
+
+B. En la carpeta Backend:
+   Reemplace server.js y package.json con los archivos de Backend
+
+C. Presione Commit changes.
+
+PASO 2 — RENDER
 En el servicio elbambinodaniel-pedidos, abra Ambiente y agregue:
 
 EMAIL_USER
-La cuenta Gmail desde la que se enviarán los avisos.
-Ejemplo: prosecogdl@gmail.com
+prosecogdl@gmail.com
 
 EMAIL_APP_PASSWORD
-Una contraseña de aplicación de Google de 16 caracteres.
+Pegue aquí una contraseña de aplicación de Google de 16 caracteres.
 NO use la contraseña normal del correo.
 
 EMAIL_TO
 prosecogdl@gmail.com
 
-Después guarde los cambios. Render hará otro despliegue.
+Después guarde los cambios. Render hará una implementación nueva.
 
-FUNCIONAMIENTO
+RESULTADO
 Cuando el cliente envíe un pedido:
-- El pedido se guarda en PostgreSQL.
-- Se genera el folio.
-- El cliente ve la confirmación.
-- Se envía automáticamente un correo con cliente, teléfono, domicilio,
-  productos, cantidades, total y observaciones.
+- Se guardará el pedido.
+- Se generará el folio.
+- Se enviará automáticamente un correo a prosecogdl@gmail.com.
+- El correo incluirá cliente, teléfono, domicilio, productos, cantidades,
+  total y observaciones.
 
 IMPORTANTE
-El pedido se guarda aunque el correo falle. En Registros de Render aparecerá
-el motivo del error para poder corregirlo.
+La cuenta de Gmail debe tener activada la verificación en dos pasos para
+crear una contraseña de aplicación.
