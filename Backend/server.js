@@ -5,10 +5,14 @@ const { Pool } = require("pg");
 const path = require("path");
 
 const app = express();
-
 const PORT = Number(process.env.PORT || 10000);
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || process.env.ADMIN_PIN || "2222";
-const JWT_SECRET = process.env.JWT_SECRET || "CAMBIA_ESTA_CLAVE_EN_RENDER";
+const ADMIN_PASSWORD =
+  process.env.ADMIN_PASSWORD ||
+  process.env.ADMIN_PIN ||
+  "2222";
+const JWT_SECRET =
+  process.env.JWT_SECRET ||
+  "CAMBIA_ESTA_CLAVE_EN_RENDER";
 
 const ALLOWED_ORIGINS = (
   process.env.ALLOWED_ORIGINS ||
@@ -33,18 +37,16 @@ const pool = new Pool({
 
 app.disable("x-powered-by");
 app.use(express.json({ limit: "1mb" }));
-app.use(
-  cors({
-    origin(origin, callback) {
-      if (!origin || ALLOWED_ORIGINS.includes(origin)) {
-        return callback(null, true);
-      }
-      return callback(new Error("Origen no permitido"));
-    },
-    methods: ["GET", "POST", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-  })
-);
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error("Origen no permitido"));
+  },
+  methods: ["GET", "POST", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 app.use(express.static(path.join(__dirname, "public")));
 
 async function initDb() {
@@ -96,62 +98,6 @@ function requireAdmin(req, res, next) {
   }
 }
 
-async function sendWhatsAppNotification(order) {
-  const token = process.env.WHATSAPP_TOKEN || process.env.WHATSAPP_ACCESS_TOKEN;
-  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
-  const adminPhone = process.env.ADMIN_WHATSAPP || process.env.ORDER_RECIPIENT_PHONE;
-
-  if (!token || !phoneNumberId || !adminPhone) {
-    console.error(
-      "WhatsApp no configurado. Revisa WHATSAPP_TOKEN, " +
-      "WHATSAPP_PHONE_NUMBER_ID y ADMIN_WHATSAPP en Render."
-    );
-    return;
-  }
-
-  const recipient = String(adminPhone).replace(/\D/g, "");
-  const message =
-    `Tienes el pedido ${order.order_number} en elbambinodaniel.com. ` +
-    "Ingresa al panel privado para revisarlo.";
-
-  console.log(`Intentando enviar WhatsApp del pedido ${order.order_number}...`);
-
-  const response = await fetch(
-    `https://graph.facebook.com/v23.0/${phoneNumberId}/messages`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        messaging_product: "whatsapp",
-        recipient_type: "individual",
-        to: recipient,
-        type: "text",
-        text: {
-          preview_url: false,
-          body: message
-        }
-      })
-    }
-  );
-
-  const detail = await response.text();
-
-  if (!response.ok) {
-    console.error(
-      `No se pudo enviar WhatsApp para ${order.order_number}. ` +
-      `HTTP ${response.status}: ${detail}`
-    );
-    return;
-  }
-
-  console.log(
-    `WhatsApp enviado correctamente para ${order.order_number}: ${detail}`
-  );
-}
-
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true, service: "elbambinodaniel-pedidos" });
 });
@@ -183,7 +129,9 @@ app.post("/api/orders", async (req, res) => {
   try {
     const body = req.body || {};
     const customerName = String(body.customerName || body.nombre || "").trim();
-    const address = String(body.address || body.domicilio || body.ubicacion || "").trim();
+    const address = String(
+      body.address || body.domicilio || body.ubicacion || ""
+    ).trim();
     const items = Array.isArray(body.items || body.productos)
       ? (body.items || body.productos)
       : [];
@@ -195,8 +143,8 @@ app.post("/api/orders", async (req, res) => {
       });
     }
 
-    const total = Number(body.total || 0);
     const orderNumber = createOrderNumber();
+    const total = Number(body.total || 0);
 
     const values = [
       orderNumber,
@@ -226,13 +174,7 @@ app.post("/api/orders", async (req, res) => {
     );
 
     const order = result.rows[0];
-
-    sendWhatsAppNotification(order).catch((error) => {
-      console.error(
-        `Error inesperado al enviar WhatsApp para ${order.order_number}:`,
-        error
-      );
-    });
+    console.log(`Pedido registrado correctamente: ${order.order_number}`);
 
     res.status(201).json({
       ok: true,
@@ -259,7 +201,6 @@ app.get("/api/admin/orders", requireAdmin, async (req, res) => {
       atendido: "atendido",
       todos: "todos"
     };
-
     const status = statusMap[requestedStatus];
 
     if (!status) {
@@ -294,7 +235,10 @@ app.patch("/api/admin/orders/:id/attend", requireAdmin, async (req, res) => {
     );
 
     if (!result.rowCount) {
-      return res.status(404).json({ ok: false, error: "Pedido no encontrado" });
+      return res.status(404).json({
+        ok: false,
+        error: "Pedido no encontrado"
+      });
     }
 
     res.json({ ok: true, order: result.rows[0] });
@@ -318,7 +262,10 @@ app.patch("/api/admin/orders/:id/reopen", requireAdmin, async (req, res) => {
     );
 
     if (!result.rowCount) {
-      return res.status(404).json({ ok: false, error: "Pedido no encontrado" });
+      return res.status(404).json({
+        ok: false,
+        error: "Pedido no encontrado"
+      });
     }
 
     res.json({ ok: true, order: result.rows[0] });

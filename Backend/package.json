@@ -1,8 +1,8 @@
 {
   "name": "elbambinodaniel-pedidos",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
-  "description": "Backend de pedidos de El Bambino Daniel",
+  "description": "Backend estable de pedidos de El Bambino Daniel, sin Meta",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

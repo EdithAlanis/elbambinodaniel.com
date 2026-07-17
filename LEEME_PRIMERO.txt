@@ -1,32 +1,27 @@
-EL BAMBINO DANIEL — BACKEND FINAL CORREGIDO
+EL BAMBINO DANIEL — ACTUALIZACIÓN FINAL SIN META
 
-ARCHIVOS QUE DEBE SUBIR A GITHUB
-- Backend/server.js
-- Backend/package.json
+INCLUYE
+1. tienda-final.js:
+   - Mantiene el carrito y el envío automático del pedido al servidor.
+   - Actualiza la leyenda autorizada:
+     * Entrega sin costo desde $1,000.00 en Zona Metropolitana.
+     * Entrega sin costo desde $1,200.00 en envíos foráneos.
+     * Cargo de $250.00 en pedidos menores.
 
-PASOS
-1. Abra la carpeta Backend de su repositorio.
-2. Use Add file > Upload files.
-3. Suba server.js y package.json.
-4. Acepte reemplazar los archivos existentes.
-5. Presione Commit changes.
-6. Render iniciará automáticamente un nuevo despliegue.
+2. Backend/server.js y Backend/package.json:
+   - Guardan automáticamente cada pedido en PostgreSQL.
+   - Mantienen el panel privado, pendientes, atendidos e histórico.
+   - Eliminan completamente la conexión con Meta y los tokens de WhatsApp.
 
-NO SUBA TOKENS A GITHUB.
+SUBIDA A GITHUB
+A) Abra SUBIR_A_LA_RAIZ_DE_GITHUB.
+   Suba tienda-final.js a la raíz del repositorio y reemplace el existente.
 
-VARIABLES QUE DEBEN EXISTIR EN RENDER
-DATABASE_URL
-ADMIN_PASSWORD o ADMIN_PIN
-JWT_SECRET
-ALLOWED_ORIGINS o ALLOWED_ORIGIN
-WHATSAPP_TOKEN
-WHATSAPP_PHONE_NUMBER_ID
-ADMIN_WHATSAPP
+B) Abra Backend.
+   Suba server.js y package.json dentro de la carpeta Backend y reemplace los existentes.
 
-VALORES YA IDENTIFICADOS
-WHATSAPP_PHONE_NUMBER_ID=936642243541482
-ADMIN_WHATSAPP=5213331191167
+C) Presione Commit changes.
+D) Espere a que GitHub Pages y Render terminen sus despliegues.
 
-SEGURIDAD
-El token que apareció en el chat ya no debe utilizarse.
-Genere uno nuevo y colóquelo únicamente en Render.
+NO ES NECESARIO CAMBIAR VARIABLES DE META.
+Puede dejarlas en Render o eliminarlas; este backend ya no las utiliza.
