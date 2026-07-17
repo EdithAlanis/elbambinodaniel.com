@@ -1,47 +1,30 @@
-EL BAMBINO DANIEL — VERSIÓN FINAL CON RESEND
+EL BAMBINO DANIEL — ZIP FINAL ÚNICO
 
-ESTE ZIP INCLUYE
-- Backend/server.js: guarda el pedido y envía automáticamente un correo con Resend.
-- Backend/package.json: configuración validada para Render.
-- RAIZ_GITHUB/config-final.js: mantiene la leyenda autorizada sin ocultar el carrito.
+MUY IMPORTANTE:
+LOS TRES ARCHIVOS SE SUBEN A LA RAÍZ DEL REPOSITORIO.
+NO LOS SUBA DENTRO DE LA CARPETA BACKEND.
 
-SUBIDA A GITHUB
+ARCHIVOS:
+- config-final.js
+- server.js
+- package.json
 
-1. En la raíz del repositorio:
-   Suba RAIZ_GITHUB/config-final.js y reemplace el existente.
+PASOS:
+1. Abra la raíz del repositorio elbambinodaniel.com en GitHub.
+2. Presione Add file > Upload files.
+3. Suba los tres archivos.
+4. Acepte reemplazar los archivos existentes.
+5. Presione Commit changes.
+6. Espere a que Render termine el despliegue.
 
-2. Dentro de la carpeta Backend:
-   Suba Backend/server.js y Backend/package.json y reemplace los existentes.
-
-3. Presione Commit changes.
-
-CONFIGURACIÓN EN RENDER
-
-Ya debe existir:
+EN RENDER DEBE EXISTIR:
 RESEND_API_KEY = la clave que comienza con re_
 
-Opcionalmente puede agregar:
-ORDER_EMAIL_TO = prosecogdl@gmail.com
-
-Si no agrega ORDER_EMAIL_TO, el sistema enviará por defecto a:
+El correo llegará automáticamente a:
 prosecogdl@gmail.com
 
-No necesita EMAIL_USER, EMAIL_APP_PASSWORD ni contraseña de Gmail.
+No necesita Gmail, contraseña de aplicación ni Meta.
 
-PRUEBA
-
-1. Espere a que Render muestre el servicio activo.
-2. Haga un pedido.
-3. Revise prosecogdl@gmail.com, incluyendo Spam y Promociones.
-4. En Registros de Render debe aparecer:
-   Intentando enviar correo Resend...
-   Correo Resend enviado correctamente...
-o un error preciso de Resend.
-
-NOTA IMPORTANTE
-
-Se usa temporalmente:
-El Bambino Daniel <onboarding@resend.dev>
-
-Esto permite hacer la primera prueba. Más adelante puede verificarse el dominio
-elbambinodaniel.com en Resend para usar un remitente propio.
+Después del despliegue:
+1. Haga un pedido de prueba.
+2. Revise prosecogdl@gmail.com, incluyendo Spam y Promociones.

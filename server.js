@@ -1,21 +1,30 @@
-const expreso = requerir("expreso");
+const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const { Pool } = require("pg");
 const path = require("path");
 
 const app = express();
-const PORT = process.env.PORT || 10000;
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "2222";
-const JWT_SECRET = process.env.JWT_SECRET || "CAMBIA_ESTA_CLAVE_EN_RENDER";
-const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS ||
-  "https://elbambinodaniel.com,https://www.elbambinodaniel.com")
+const PORT = Number(process.env.PORT || 10000);
+const ADMIN_PASSWORD =
+  process.env.ADMIN_PASSWORD ||
+  process.env.ADMIN_PIN ||
+  "2222";
+const JWT_SECRET =
+  process.env.JWT_SECRET ||
+  "CAMBIA_ESTA_CLAVE_EN_RENDER";
+
+const ALLOWED_ORIGINS = (
+  process.env.ALLOWED_ORIGINS ||
+  process.env.ALLOWED_ORIGIN ||
+  "https://elbambinodaniel.com,https://www.elbambinodaniel.com"
+)
   .split(",")
-  .map(v => v.trim())
+  .map((value) => value.trim())
   .filter(Boolean);
 
 if (!process.env.DATABASE_URL) {
-  console.error("Falta DATABASE_URL. Conecta una base PostgreSQL de Render.");
+  console.error("Falta DATABASE_URL. Conecta PostgreSQL en Render.");
   process.exit(1);
 }
 
@@ -30,7 +39,9 @@ app.disable("x-powered-by");
 app.use(express.json({ limit: "1mb" }));
 app.use(cors({
   origin(origin, callback) {
-    if (!origin || ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+      return callback(null, true);
+    }
     return callback(new Error("Origen no permitido"));
   },
   methods: ["GET", "POST", "PATCH", "OPTIONS"],
@@ -62,98 +73,283 @@ async function initDb() {
   `);
 }
 
-función crearNúmero de pedido() {
-  constante d = nuevo Fecha();
-  constante fecha = [
-    d.obtener año completo(),
-    Cadena(d.obtener mes() + 1).caminoInicio(2, "0"),
-    Cadena(d.obtener fecha()).caminoInicio(2, "0")
-  ].unirse("");
-  constante aleatorio = Matemáticas.piso(1000 + Matemáticas.aleatorio() * 9000);
-  devolver `EBD-${fecha}-${aleatorio}`;
+function createOrderNumber() {
+  const now = new Date();
+  const datePart = [
+    now.getFullYear(),
+    String(now.getMonth() + 1).padStart(2, "0"),
+    String(now.getDate()).padStart(2, "0")
+  ].join("");
+  const randomPart = Math.floor(1000 + Math.random() * 9000);
+  return `EBD-${datePart}-${randomPart}`;
 }
 
-función requerirAdmin(req, res, próximo) {
-  constante encabezamiento = req.encabezados.autorización || "";
-  constante simbólico = encabezamiento.comienza con("portador") ? encabezamiento.rebanada(7) : "";
-  intentar {
-    req.administración = jwt.verificar(simbólico, JWT_SECRET);
-    próximo();
-  } atrapar {
-    res.estado(401).json({ OK: FALSO, error: "Acceso no autorizado" });
+function requireAdmin(req, res, next) {
+  const authorization = req.headers.authorization || "";
+  const token = authorization.startsWith("Bearer ")
+    ? authorization.slice(7)
+    : "";
+
+  try {
+    req.admin = jwt.verify(token, JWT_SECRET);
+    next();
+  } catch {
+    res.status(401).json({ ok: false, error: "Acceso no autorizado" });
   }
 }
 
-asíncrono función enviarWhatsAppNotificación(orden) {
- constante adminTeléfono = proceso.ambiente.ADMIN_WHATSAPP;
-  constante número de teléfonoId = proceso.ambiente.WHATSAPP_PHONE_NUMBER_ID;
-  constante adminTeléfono = proceso.ambiente.ADMIN_WHATAPP;
 
-  si (!simbólico || !número de teléfonoId || !adminTeléfono) devolver;
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
 
-  constante mensaje =
-    `Tienes el pedido ${orden.número de orden} en elbambinodaniel.com. ` +
-    `Ingresa al panel privado para revisarlo.`;
+function formatMoney(value) {
+  return new Intl.NumberFormat("es-MX", {
+    style: "currency",
+    currency: "MXN"
+  }).format(Number(value || 0));
+}
 
-  constante respuesta = esperar buscar(
-    `https://graph.facebook.com/v23.0/${número de teléfonoId}/mensajes`,
-    {
-      método: "CORREO",
-      encabezados: {
-        Autorización: `Portador ${simbólico}`,
-        "Tipo de contenido": "aplicación/json"
-      },
-      cuerpo: JSON.encadenar({
-        producto_mensajería: "whatsapp",
-        a: adminTeléfono,
-        tipo: "texto",
-        texto: { cuerpo: mensaje }
-      })
-    }
+function getItemData(item) {
+  const name =
+    item?.name ||
+    item?.nombre ||
+    item?.product ||
+    item?.producto ||
+    "Producto";
+
+  const quantity = Number(item?.quantity || item?.cantidad || 1);
+  const price = Number(item?.price || item?.precio || 0);
+  const subtotal = Number(
+    item?.subtotal ||
+    item?.total ||
+    quantity * price
   );
 
-  si (!respuesta.OK) {
-    constante detalle = esperar respuesta.texto();
-    consola.error("No se pudo enviar WhatsApp:", detalle);
-  }
+  return { name, quantity, price, subtotal };
 }
 
-aplicación.conseguir("/api/salud", (_req, res) => {
-  res.json({ OK: verdadero, servicio: "elbambinodaniel-pedidos" });
-});
+async function sendOrderEmailWithResend(order) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const emailTo =
+    process.env.ORDER_EMAIL_TO ||
+    process.env.EMAIL_TO ||
+    "prosecogdl@gmail.com";
 
-aplicación.correo("/api/admin/iniciar sesión", (req, res) => {
-  constante contraseña = Cadena(req.cuerpo?.contraseña || "");
-  si (contraseña !== ADMIN_PASSWORD) {
-    devolver res.estado(401).json({ OK: FALSO, error: "Clave incorrecta" });
+  if (!apiKey) {
+    console.error(
+      `No se envió el correo del pedido ${order.order_number}: ` +
+      "falta RESEND_API_KEY en Render."
+    );
+    return;
   }
-  constante simbólico = jwt.firmar({ role: "administración" }, JWT_SECRET, { caduca en: "12h" });
-  res.json({ OK: verdadero, simbólico });
+
+  const items = Array.isArray(order.items) ? order.items : [];
+
+  const itemRows = items.length
+    ? items
+        .map((item) => {
+          const data = getItemData(item);
+          return `
+            <tr>
+              <td style="padding:9px;border:1px solid #d9d9d9;">
+                ${escapeHtml(data.name)}
+              </td>
+              <td style="padding:9px;border:1px solid #d9d9d9;text-align:center;">
+                ${data.quantity}
+              </td>
+              <td style="padding:9px;border:1px solid #d9d9d9;text-align:right;">
+                ${formatMoney(data.price)}
+              </td>
+              <td style="padding:9px;border:1px solid #d9d9d9;text-align:right;">
+                ${formatMoney(data.subtotal)}
+              </td>
+            </tr>
+          `;
+        })
+        .join("")
+    : `
+      <tr>
+        <td colspan="4" style="padding:9px;border:1px solid #d9d9d9;">
+          Sin productos
+        </td>
+      </tr>
+    `;
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:760px;margin:0 auto;color:#172033;">
+      <div style="background:#0755b5;color:white;padding:20px;border-radius:12px 12px 0 0;">
+        <h1 style="margin:0;font-size:25px;">Nuevo pedido recibido</h1>
+        <p style="margin:8px 0 0;font-size:18px;">
+          Folio: <strong>${escapeHtml(order.order_number)}</strong>
+        </p>
+      </div>
+
+      <div style="padding:22px;border:1px solid #d9e2ef;border-top:0;">
+        <h2 style="color:#0755b5;">Datos del cliente</h2>
+        <p><strong>Nombre:</strong> ${escapeHtml(order.customer_name)}</p>
+        <p><strong>Teléfono:</strong> ${escapeHtml(order.phone || "No indicado")}</p>
+        <p><strong>Domicilio:</strong> ${escapeHtml(order.address)}</p>
+        <p><strong>Colonia:</strong> ${escapeHtml(order.neighborhood || "No indicada")}</p>
+        <p><strong>Ciudad:</strong> ${escapeHtml(order.city || "No indicada")}</p>
+        <p><strong>Estado:</strong> ${escapeHtml(order.state || "No indicado")}</p>
+        <p><strong>Horario:</strong> ${escapeHtml(order.business_hours || "No indicado")}</p>
+        <p><strong>Cierra al mediodía:</strong> ${order.closes_midday ? "Sí" : "No"}</p>
+        <p><strong>Forma de pago:</strong> ${escapeHtml(order.payment_method || "Pagar al recibir")}</p>
+
+        <h2 style="color:#0755b5;margin-top:28px;">Productos</h2>
+        <table style="border-collapse:collapse;width:100%;font-size:14px;">
+          <thead>
+            <tr style="background:#eef5ff;">
+              <th style="padding:9px;border:1px solid #d9d9d9;text-align:left;">Producto</th>
+              <th style="padding:9px;border:1px solid #d9d9d9;">Cantidad</th>
+              <th style="padding:9px;border:1px solid #d9d9d9;text-align:right;">Precio</th>
+              <th style="padding:9px;border:1px solid #d9d9d9;text-align:right;">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>${itemRows}</tbody>
+        </table>
+
+        <h2 style="text-align:right;color:#cc1736;margin-top:22px;">
+          Total estimado: ${formatMoney(order.total)}
+        </h2>
+
+        <p>
+          <strong>Observaciones:</strong>
+          ${escapeHtml(order.notes || "Sin observaciones")}
+        </p>
+
+        <p style="margin-top:28px;padding:14px;background:#fff5dc;border-radius:8px;">
+          Revise el pedido en el panel privado de <strong>elbambinodaniel.com</strong>.
+        </p>
+      </div>
+    </div>
+  `;
+
+  const textItems = items.length
+    ? items
+        .map((item, index) => {
+          const data = getItemData(item);
+          return (
+            `${index + 1}. ${data.name} | Cantidad: ${data.quantity} | ` +
+            `Precio: ${formatMoney(data.price)} | Subtotal: ${formatMoney(data.subtotal)}`
+          );
+        })
+        .join("\n")
+    : "Sin productos";
+
+  const text = [
+    `NUEVO PEDIDO ${order.order_number}`,
+    "",
+    `Cliente: ${order.customer_name}`,
+    `Teléfono: ${order.phone || "No indicado"}`,
+    `Domicilio: ${order.address}`,
+    `Colonia: ${order.neighborhood || "No indicada"}`,
+    `Ciudad: ${order.city || "No indicada"}`,
+    `Estado: ${order.state || "No indicado"}`,
+    `Horario: ${order.business_hours || "No indicado"}`,
+    `Cierra al mediodía: ${order.closes_midday ? "Sí" : "No"}`,
+    `Forma de pago: ${order.payment_method || "Pagar al recibir"}`,
+    "",
+    "PRODUCTOS",
+    textItems,
+    "",
+    `TOTAL ESTIMADO: ${formatMoney(order.total)}`,
+    "",
+    `Observaciones: ${order.notes || "Sin observaciones"}`
+  ].join("\n");
+
+  console.log(
+    `Intentando enviar correo Resend del pedido ${order.order_number} a ${emailTo}...`
+  );
+
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      from: "El Bambino Daniel <onboarding@resend.dev>",
+      to: [emailTo],
+      subject: `Nuevo pedido ${order.order_number}`,
+      html,
+      text
+    })
+  });
+
+  const detail = await response.text();
+
+  if (!response.ok) {
+    console.error(
+      `No se pudo enviar el correo Resend para ${order.order_number}. ` +
+      `HTTP ${response.status}: ${detail}`
+    );
+    return;
+  }
+
+  console.log(
+    `Correo Resend enviado correctamente para ${order.order_number}: ${detail}`
+  );
+}
+
+app.get("/api/health", (_req, res) => {
+  res.json({ ok: true, service: "elbambinodaniel-pedidos" });
 });
 
-aplicación.correo("/api/órdenes", asíncrono (req, res) => {
-  intentar {
-    constante cuerpo = req.cuerpo || {};
-    constante nombre del cliente = Cadena(cuerpo.nombre del cliente || cuerpo.nombre || "").recortar();
-    constante DIRECCIÓN = Cadena(cuerpo.DIRECCIÓN || cuerpo.domicilio || cuerpo.ubicacion || "").recortar();
-    constante elementos = Formación.esmatriz(cuerpo.elementos || cuerpo.productos)
-      ? (cuerpo.elementos || cuerpo.productos)
+app.get("/api/salud", (_req, res) => {
+  res.json({ ok: true, servicio: "elbambinodaniel-pedidos" });
+});
+
+app.post("/api/admin/login", (req, res) => {
+  const password = String(
+    req.body?.password ??
+    req.body?.pin ??
+    req.body?.clave ??
+    ""
+  );
+
+  if (password !== ADMIN_PASSWORD) {
+    return res.status(401).json({ ok: false, error: "Clave incorrecta" });
+  }
+
+  const token = jwt.sign({ role: "admin" }, JWT_SECRET, {
+    expiresIn: "12h"
+  });
+
+  res.json({ ok: true, token });
+});
+
+app.post("/api/orders", async (req, res) => {
+  try {
+    const body = req.body || {};
+    const customerName = String(body.customerName || body.nombre || "").trim();
+    const address = String(
+      body.address || body.domicilio || body.ubicacion || ""
+    ).trim();
+    const items = Array.isArray(body.items || body.productos)
+      ? (body.items || body.productos)
       : [];
 
-    si (!nombre del cliente || !DIRECCIÓN || elementos.longitud === 0) {
-      devolver res.estado(400).json({
-        OK: FALSO,
+    if (!customerName || !address || items.length === 0) {
+      return res.status(400).json({
+        ok: false,
         error: "Faltan nombre, domicilio o productos."
       });
     }
 
-    constante total = Número(cuerpo.total || 0);
-    constante número de orden = crearNúmero de pedido();
+    const orderNumber = createOrderNumber();
+    const total = Number(body.total || 0);
 
-    constante valores = [
-      número de orden,
-      nombre del cliente,
-      Cadena(cuerpo.teléfono || cuerpo.teléfono || ""),
+    const values = [
+      orderNumber,
+      customerName,
+      String(body.phone || body.telefono || ""),
       address,
       String(body.neighborhood || body.colonia || ""),
       String(body.city || body.ciudad || ""),
@@ -168,8 +364,9 @@ aplicación.correo("/api/órdenes", asíncrono (req, res) => {
 
     const result = await pool.query(
       `INSERT INTO orders (
-        order_number, customer_name, phone, address, neighborhood, city, state,
-        business_hours, closes_midday, payment_method, items, total, notes
+        order_number, customer_name, phone, address, neighborhood,
+        city, state, business_hours, closes_midday, payment_method,
+        items, total, notes
       ) VALUES (
         $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11::jsonb,$12,$13
       ) RETURNING *`,
@@ -177,7 +374,14 @@ aplicación.correo("/api/órdenes", asíncrono (req, res) => {
     );
 
     const order = result.rows[0];
-    sendWhatsAppNotification(order).catch(console.error);
+    console.log(`Pedido registrado correctamente: ${order.order_number}`);
+
+    sendOrderEmailWithResend(order).catch((error) => {
+      console.error(
+        `Error inesperado al enviar el correo del pedido ${order.order_number}:`,
+        error
+      );
+    });
 
     res.status(201).json({
       ok: true,
@@ -185,16 +389,28 @@ aplicación.correo("/api/órdenes", asíncrono (req, res) => {
       message: `Pedido ${order.order_number} recibido correctamente.`
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ ok: false, error: "No fue posible guardar el pedido." });
+    console.error("Error al guardar pedido:", error);
+    res.status(500).json({
+      ok: false,
+      error: "No fue posible guardar el pedido."
+    });
   }
 });
 
 app.get("/api/admin/orders", requireAdmin, async (req, res) => {
   try {
-    const status = String(req.query.status || "pendiente");
-    const allowed = ["pendiente", "atendido", "todos"];
-    if (!allowed.includes(status)) {
+    const requestedStatus = String(req.query.status || "pendiente");
+    const statusMap = {
+      pending: "pendiente",
+      attended: "atendido",
+      all: "todos",
+      pendiente: "pendiente",
+      atendido: "atendido",
+      todos: "todos"
+    };
+    const status = statusMap[requestedStatus];
+
+    if (!status) {
       return res.status(400).json({ ok: false, error: "Estado inválido" });
     }
 
@@ -207,8 +423,11 @@ app.get("/api/admin/orders", requireAdmin, async (req, res) => {
 
     res.json({ ok: true, orders: result.rows });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ ok: false, error: "No fue posible consultar pedidos." });
+    console.error("Error al consultar pedidos:", error);
+    res.status(500).json({
+      ok: false,
+      error: "No fue posible consultar pedidos."
+    });
   }
 });
 
@@ -221,13 +440,21 @@ app.patch("/api/admin/orders/:id/attend", requireAdmin, async (req, res) => {
        RETURNING *`,
       [req.params.id]
     );
+
     if (!result.rowCount) {
-      return res.status(404).json({ ok: false, error: "Pedido no encontrado" });
+      return res.status(404).json({
+        ok: false,
+        error: "Pedido no encontrado"
+      });
     }
+
     res.json({ ok: true, order: result.rows[0] });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ ok: false, error: "No fue posible actualizar el pedido." });
+    console.error("Error al atender pedido:", error);
+    res.status(500).json({
+      ok: false,
+      error: "No fue posible actualizar el pedido."
+    });
   }
 });
 
@@ -240,13 +467,21 @@ app.patch("/api/admin/orders/:id/reopen", requireAdmin, async (req, res) => {
        RETURNING *`,
       [req.params.id]
     );
+
     if (!result.rowCount) {
-      return res.status(404).json({ ok: false, error: "Pedido no encontrado" });
+      return res.status(404).json({
+        ok: false,
+        error: "Pedido no encontrado"
+      });
     }
+
     res.json({ ok: true, order: result.rows[0] });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ ok: false, error: "No fue posible actualizar el pedido." });
+    console.error("Error al reabrir pedido:", error);
+    res.status(500).json({
+      ok: false,
+      error: "No fue posible actualizar el pedido."
+    });
   }
 });
 
@@ -260,7 +495,7 @@ initDb()
       console.log(`Servidor activo en puerto ${PORT}`);
     });
   })
-  .catch(error => {
+  .catch((error) => {
     console.error("Error al iniciar la base de datos:", error);
     process.exit(1);
   });
