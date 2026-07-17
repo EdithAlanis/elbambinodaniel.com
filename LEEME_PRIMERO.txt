@@ -1,13 +1,16 @@
-CAMBIO VISIBLE DE LA LEYENDA
+CORRECCIÓN DEL CARRITO
 
-Este archivo corrige directamente el archivo que la página ya está cargando.
+Este archivo reemplaza la versión anterior de config-final.js.
+
+La versión anterior modificó un contenedor demasiado grande y ocultó el carrito.
+Esta versión solo cambia el texto exacto de la leyenda y no modifica el diseño ni el carrito.
 
 PASOS
-1. Abra la raíz del repositorio de GitHub.
+1. Abra la raíz del repositorio en GitHub.
 2. Use Add file > Upload files.
 3. Suba config-final.js y reemplace el existente.
 4. Presione Commit changes.
-5. Espere 1 a 3 minutos.
+5. Espere entre 1 y 3 minutos.
 6. Abra elbambinodaniel.com y presione Ctrl + F5.
 
 No cambie ningún otro archivo.

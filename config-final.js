@@ -1,63 +1,77 @@
 window.ORDER_API_URL = "https://elbambinodaniel-pedidos.onrender.com";
 window.EL_BAMBINO_WHATSAPP = "";
 
-/* Actualización visible del aviso de entrega */
+/*
+  Corrección segura del aviso de entrega.
+  Esta versión NO reemplaza contenedores ni el carrito.
+  Solo cambia el texto exacto del aviso anterior.
+*/
 (function () {
-  const NUEVO_AVISO_HTML = `
-    <strong>Precio estimado</strong><br>
-    El importe final se confirma cuando el pedido es preparado en el almacén.<br><br>
-    <strong>Entrega a domicilio sin costo en pedidos desde $1,000.00 en la Zona Metropolitana y desde $1,200.00 en envíos foráneos.</strong><br><br>
-    En pedidos de menor importe se aplicará un cargo de entrega de <strong>$250.00</strong>.
-  `;
-
-  const TEXTOS_ANTERIORES = [
+  const oldTexts = [
     "El importe final se confirma cuando el producto llega desde almacén.",
+    "El importe final se confirma cuando el producto llega desde el almacén.",
     "El precio final puede variar y se confirma al recibir el producto desde almacén.",
     "El precio final se confirma cuando el producto llega a nuestras instalaciones desde el almacén."
   ];
 
-  function actualizarAvisos() {
-    const candidatos = document.querySelectorAll(
-      "div, p, section, aside, span, small"
+  const newText =
+    "El importe final se confirma cuando el pedido es preparado en el almacén. " +
+    "Entrega a domicilio sin costo en pedidos desde $1,000.00 en la Zona Metropolitana " +
+    "y desde $1,200.00 en envíos foráneos. " +
+    "En pedidos de menor importe se aplicará un cargo de entrega de $250.00.";
+
+  function normalize(value) {
+    return String(value || "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function replaceExactTextNodes() {
+    const walker = document.createTreeWalker(
+      document.body,
+      NodeFilter.SHOW_TEXT
     );
 
-    candidatos.forEach((elemento) => {
-      const texto = (elemento.textContent || "").replace(/\s+/g, " ").trim();
+    const textNodes = [];
+    let node;
 
-      if (
-        TEXTOS_ANTERIORES.some((anterior) => texto.includes(anterior)) ||
-        (
-          texto.includes("Precio estimado") &&
-          texto.includes("producto llega desde almacén")
-        )
-      ) {
-        const contenedor =
-          elemento.closest(".final-price-notice, .price-notice, .notice, .alert") ||
-          elemento;
+    while ((node = walker.nextNode())) {
+      textNodes.push(node);
+    }
 
-        contenedor.innerHTML = NUEVO_AVISO_HTML;
-        contenedor.setAttribute("data-aviso-entrega-actualizado", "si");
+    textNodes.forEach((textNode) => {
+      const current = normalize(textNode.nodeValue);
+
+      for (const oldText of oldTexts) {
+        if (current === oldText || current.includes(oldText)) {
+          textNode.nodeValue = textNode.nodeValue.replace(oldText, newText);
+          break;
+        }
       }
     });
   }
 
-  function iniciar() {
-    actualizarAvisos();
+  function start() {
+    replaceExactTextNodes();
 
-    const observador = new MutationObserver(actualizarAvisos);
-    observador.observe(document.documentElement, {
-      childList: true,
-      subtree: true
+    const observer = new MutationObserver(() => {
+      replaceExactTextNodes();
     });
 
-    [250, 750, 1500, 3000, 5000].forEach((tiempo) => {
-      setTimeout(actualizarAvisos, tiempo);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true
+    });
+
+    [300, 800, 1500, 3000].forEach((delay) => {
+      setTimeout(replaceExactTextNodes, delay);
     });
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", iniciar, { once: true });
+    document.addEventListener("DOMContentLoaded", start, { once: true });
   } else {
-    iniciar();
+    start();
   }
 })();
