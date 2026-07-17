@@ -1,47 +1,47 @@
-EL BAMBINO DANIEL — VERSIÓN FINAL CON CORREO AUTOMÁTICO
+EL BAMBINO DANIEL — VERSIÓN FINAL CON RESEND
 
 ESTE ZIP INCLUYE
-- RAIZ_GITHUB/config-final.js
-  Mantiene visible la leyenda de entrega sin ocultar el carrito.
+- Backend/server.js: guarda el pedido y envía automáticamente un correo con Resend.
+- Backend/package.json: configuración validada para Render.
+- RAIZ_GITHUB/config-final.js: mantiene la leyenda autorizada sin ocultar el carrito.
 
-- Backend/server.js
-  Guarda los pedidos y envía aviso automático por correo.
+SUBIDA A GITHUB
 
-- Backend/package.json
-  Incluye nodemailer para el envío de correo.
+1. En la raíz del repositorio:
+   Suba RAIZ_GITHUB/config-final.js y reemplace el existente.
 
-PASO 1 — GITHUB
-A. En la raíz del repositorio:
-   Reemplace config-final.js con RAIZ_GITHUB/config-final.js
+2. Dentro de la carpeta Backend:
+   Suba Backend/server.js y Backend/package.json y reemplace los existentes.
 
-B. En la carpeta Backend:
-   Reemplace server.js y package.json con los archivos de Backend
+3. Presione Commit changes.
 
-C. Presione Commit changes.
+CONFIGURACIÓN EN RENDER
 
-PASO 2 — RENDER
-En el servicio elbambinodaniel-pedidos, abra Ambiente y agregue:
+Ya debe existir:
+RESEND_API_KEY = la clave que comienza con re_
 
-EMAIL_USER
+Opcionalmente puede agregar:
+ORDER_EMAIL_TO = prosecogdl@gmail.com
+
+Si no agrega ORDER_EMAIL_TO, el sistema enviará por defecto a:
 prosecogdl@gmail.com
 
-EMAIL_APP_PASSWORD
-Pegue aquí una contraseña de aplicación de Google de 16 caracteres.
-NO use la contraseña normal del correo.
+No necesita EMAIL_USER, EMAIL_APP_PASSWORD ni contraseña de Gmail.
 
-EMAIL_TO
-prosecogdl@gmail.com
+PRUEBA
 
-Después guarde los cambios. Render hará una implementación nueva.
+1. Espere a que Render muestre el servicio activo.
+2. Haga un pedido.
+3. Revise prosecogdl@gmail.com, incluyendo Spam y Promociones.
+4. En Registros de Render debe aparecer:
+   Intentando enviar correo Resend...
+   Correo Resend enviado correctamente...
+o un error preciso de Resend.
 
-RESULTADO
-Cuando el cliente envíe un pedido:
-- Se guardará el pedido.
-- Se generará el folio.
-- Se enviará automáticamente un correo a prosecogdl@gmail.com.
-- El correo incluirá cliente, teléfono, domicilio, productos, cantidades,
-  total y observaciones.
+NOTA IMPORTANTE
 
-IMPORTANTE
-La cuenta de Gmail debe tener activada la verificación en dos pasos para
-crear una contraseña de aplicación.
+Se usa temporalmente:
+El Bambino Daniel <onboarding@resend.dev>
+
+Esto permite hacer la primera prueba. Más adelante puede verificarse el dominio
+elbambinodaniel.com en Resend para usar un remitente propio.

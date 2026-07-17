@@ -3,7 +3,6 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const { Pool } = require("pg");
 const path = require("path");
-const nodemailer = require("nodemailer");
 
 const app = express();
 const PORT = Number(process.env.PORT || 10000);
@@ -100,6 +99,15 @@ function requireAdmin(req, res, next) {
 }
 
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 function formatMoney(value) {
   return new Intl.NumberFormat("es-MX", {
     style: "currency",
@@ -107,66 +115,136 @@ function formatMoney(value) {
   }).format(Number(value || 0));
 }
 
-function formatOrderItems(items) {
-  if (!Array.isArray(items) || items.length === 0) {
-    return "Sin productos";
-  }
+function getItemData(item) {
+  const name =
+    item?.name ||
+    item?.nombre ||
+    item?.product ||
+    item?.producto ||
+    "Producto";
 
-  return items
-    .map((item, index) => {
-      const name =
-        item.name ||
-        item.nombre ||
-        item.product ||
-        item.producto ||
-        "Producto";
-      const quantity = Number(item.quantity || item.cantidad || 1);
-      const price = Number(item.price || item.precio || 0);
-      const subtotal = Number(
-        item.subtotal ||
-        item.total ||
-        quantity * price
-      );
+  const quantity = Number(item?.quantity || item?.cantidad || 1);
+  const price = Number(item?.price || item?.precio || 0);
+  const subtotal = Number(
+    item?.subtotal ||
+    item?.total ||
+    quantity * price
+  );
 
-      return [
-        `${index + 1}. ${name}`,
-        `Cantidad: ${quantity}`,
-        `Precio: ${formatMoney(price)}`,
-        `Subtotal: ${formatMoney(subtotal)}`
-      ].join(" | ");
-    })
-    .join("\n");
+  return { name, quantity, price, subtotal };
 }
 
-async function sendOrderEmail(order) {
-  const emailUser = process.env.EMAIL_USER;
-  const emailPassword = process.env.EMAIL_APP_PASSWORD;
+async function sendOrderEmailWithResend(order) {
+  const apiKey = process.env.RESEND_API_KEY;
   const emailTo =
+    process.env.ORDER_EMAIL_TO ||
     process.env.EMAIL_TO ||
     "prosecogdl@gmail.com";
 
-  if (!emailUser || !emailPassword) {
+  if (!apiKey) {
     console.error(
-      "Correo automático no configurado. Revisa EMAIL_USER y " +
-      "EMAIL_APP_PASSWORD en Render."
+      `No se envió el correo del pedido ${order.order_number}: ` +
+      "falta RESEND_API_KEY en Render."
     );
     return;
   }
 
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: emailUser,
-      pass: emailPassword
-    }
-  });
+  const items = Array.isArray(order.items) ? order.items : [];
 
-  const items = Array.isArray(order.items)
-    ? order.items
-    : [];
+  const itemRows = items.length
+    ? items
+        .map((item) => {
+          const data = getItemData(item);
+          return `
+            <tr>
+              <td style="padding:9px;border:1px solid #d9d9d9;">
+                ${escapeHtml(data.name)}
+              </td>
+              <td style="padding:9px;border:1px solid #d9d9d9;text-align:center;">
+                ${data.quantity}
+              </td>
+              <td style="padding:9px;border:1px solid #d9d9d9;text-align:right;">
+                ${formatMoney(data.price)}
+              </td>
+              <td style="padding:9px;border:1px solid #d9d9d9;text-align:right;">
+                ${formatMoney(data.subtotal)}
+              </td>
+            </tr>
+          `;
+        })
+        .join("")
+    : `
+      <tr>
+        <td colspan="4" style="padding:9px;border:1px solid #d9d9d9;">
+          Sin productos
+        </td>
+      </tr>
+    `;
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:760px;margin:0 auto;color:#172033;">
+      <div style="background:#0755b5;color:white;padding:20px;border-radius:12px 12px 0 0;">
+        <h1 style="margin:0;font-size:25px;">Nuevo pedido recibido</h1>
+        <p style="margin:8px 0 0;font-size:18px;">
+          Folio: <strong>${escapeHtml(order.order_number)}</strong>
+        </p>
+      </div>
+
+      <div style="padding:22px;border:1px solid #d9e2ef;border-top:0;">
+        <h2 style="color:#0755b5;">Datos del cliente</h2>
+        <p><strong>Nombre:</strong> ${escapeHtml(order.customer_name)}</p>
+        <p><strong>Teléfono:</strong> ${escapeHtml(order.phone || "No indicado")}</p>
+        <p><strong>Domicilio:</strong> ${escapeHtml(order.address)}</p>
+        <p><strong>Colonia:</strong> ${escapeHtml(order.neighborhood || "No indicada")}</p>
+        <p><strong>Ciudad:</strong> ${escapeHtml(order.city || "No indicada")}</p>
+        <p><strong>Estado:</strong> ${escapeHtml(order.state || "No indicado")}</p>
+        <p><strong>Horario:</strong> ${escapeHtml(order.business_hours || "No indicado")}</p>
+        <p><strong>Cierra al mediodía:</strong> ${order.closes_midday ? "Sí" : "No"}</p>
+        <p><strong>Forma de pago:</strong> ${escapeHtml(order.payment_method || "Pagar al recibir")}</p>
+
+        <h2 style="color:#0755b5;margin-top:28px;">Productos</h2>
+        <table style="border-collapse:collapse;width:100%;font-size:14px;">
+          <thead>
+            <tr style="background:#eef5ff;">
+              <th style="padding:9px;border:1px solid #d9d9d9;text-align:left;">Producto</th>
+              <th style="padding:9px;border:1px solid #d9d9d9;">Cantidad</th>
+              <th style="padding:9px;border:1px solid #d9d9d9;text-align:right;">Precio</th>
+              <th style="padding:9px;border:1px solid #d9d9d9;text-align:right;">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>${itemRows}</tbody>
+        </table>
+
+        <h2 style="text-align:right;color:#cc1736;margin-top:22px;">
+          Total estimado: ${formatMoney(order.total)}
+        </h2>
+
+        <p>
+          <strong>Observaciones:</strong>
+          ${escapeHtml(order.notes || "Sin observaciones")}
+        </p>
+
+        <p style="margin-top:28px;padding:14px;background:#fff5dc;border-radius:8px;">
+          Revise el pedido en el panel privado de <strong>elbambinodaniel.com</strong>.
+        </p>
+      </div>
+    </div>
+  `;
+
+  const textItems = items.length
+    ? items
+        .map((item, index) => {
+          const data = getItemData(item);
+          return (
+            `${index + 1}. ${data.name} | Cantidad: ${data.quantity} | ` +
+            `Precio: ${formatMoney(data.price)} | Subtotal: ${formatMoney(data.subtotal)}`
+          );
+        })
+        .join("\n")
+    : "Sin productos";
 
   const text = [
-    `Nuevo pedido: ${order.order_number}`,
+    `NUEVO PEDIDO ${order.order_number}`,
     "",
     `Cliente: ${order.customer_name}`,
     `Teléfono: ${order.phone || "No indicado"}`,
@@ -179,95 +257,44 @@ async function sendOrderEmail(order) {
     `Forma de pago: ${order.payment_method || "Pagar al recibir"}`,
     "",
     "PRODUCTOS",
-    formatOrderItems(items),
+    textItems,
     "",
     `TOTAL ESTIMADO: ${formatMoney(order.total)}`,
     "",
-    `Observaciones: ${order.notes || "Sin observaciones"}`,
-    "",
-    "Revise el pedido en el panel privado de elbambinodaniel.com."
+    `Observaciones: ${order.notes || "Sin observaciones"}`
   ].join("\n");
 
-  const htmlItems = items.length
-    ? items
-        .map((item) => {
-          const name =
-            item.name ||
-            item.nombre ||
-            item.product ||
-            item.producto ||
-            "Producto";
-          const quantity = Number(item.quantity || item.cantidad || 1);
-          const price = Number(item.price || item.precio || 0);
-          const subtotal = Number(
-            item.subtotal ||
-            item.total ||
-            quantity * price
-          );
+  console.log(
+    `Intentando enviar correo Resend del pedido ${order.order_number} a ${emailTo}...`
+  );
 
-          return `
-            <tr>
-              <td style="padding:8px;border:1px solid #ddd;">${name}</td>
-              <td style="padding:8px;border:1px solid #ddd;text-align:center;">${quantity}</td>
-              <td style="padding:8px;border:1px solid #ddd;text-align:right;">${formatMoney(price)}</td>
-              <td style="padding:8px;border:1px solid #ddd;text-align:right;">${formatMoney(subtotal)}</td>
-            </tr>
-          `;
-        })
-        .join("")
-    : `
-      <tr>
-        <td colspan="4" style="padding:8px;border:1px solid #ddd;">
-          Sin productos
-        </td>
-      </tr>
-    `;
-
-  const html = `
-    <div style="font-family:Arial,sans-serif;max-width:760px;margin:auto;">
-      <h1 style="color:#0b4da2;">Nuevo pedido ${order.order_number}</h1>
-      <p><strong>Cliente:</strong> ${order.customer_name}</p>
-      <p><strong>Teléfono:</strong> ${order.phone || "No indicado"}</p>
-      <p><strong>Domicilio:</strong> ${order.address}</p>
-      <p><strong>Colonia:</strong> ${order.neighborhood || "No indicada"}</p>
-      <p><strong>Ciudad:</strong> ${order.city || "No indicada"}</p>
-      <p><strong>Estado:</strong> ${order.state || "No indicado"}</p>
-      <p><strong>Horario:</strong> ${order.business_hours || "No indicado"}</p>
-      <p><strong>Cierra al mediodía:</strong> ${order.closes_midday ? "Sí" : "No"}</p>
-      <p><strong>Forma de pago:</strong> ${order.payment_method || "Pagar al recibir"}</p>
-
-      <h2>Productos</h2>
-      <table style="border-collapse:collapse;width:100%;">
-        <thead>
-          <tr>
-            <th style="padding:8px;border:1px solid #ddd;text-align:left;">Producto</th>
-            <th style="padding:8px;border:1px solid #ddd;">Cantidad</th>
-            <th style="padding:8px;border:1px solid #ddd;text-align:right;">Precio</th>
-            <th style="padding:8px;border:1px solid #ddd;text-align:right;">Subtotal</th>
-          </tr>
-        </thead>
-        <tbody>${htmlItems}</tbody>
-      </table>
-
-      <h2 style="text-align:right;">Total estimado: ${formatMoney(order.total)}</h2>
-      <p><strong>Observaciones:</strong> ${order.notes || "Sin observaciones"}</p>
-      <p style="margin-top:30px;">
-        Revise este pedido en el panel privado de
-        <strong>elbambinodaniel.com</strong>.
-      </p>
-    </div>
-  `;
-
-  await transporter.sendMail({
-    from: `"El Bambino Daniel" <${emailUser}>`,
-    to: emailTo,
-    subject: `Nuevo pedido ${order.order_number}`,
-    text,
-    html
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      from: "El Bambino Daniel <onboarding@resend.dev>",
+      to: [emailTo],
+      subject: `Nuevo pedido ${order.order_number}`,
+      html,
+      text
+    })
   });
 
+  const detail = await response.text();
+
+  if (!response.ok) {
+    console.error(
+      `No se pudo enviar el correo Resend para ${order.order_number}. ` +
+      `HTTP ${response.status}: ${detail}`
+    );
+    return;
+  }
+
   console.log(
-    `Correo enviado correctamente para ${order.order_number} a ${emailTo}`
+    `Correo Resend enviado correctamente para ${order.order_number}: ${detail}`
   );
 }
 
@@ -349,9 +376,9 @@ app.post("/api/orders", async (req, res) => {
     const order = result.rows[0];
     console.log(`Pedido registrado correctamente: ${order.order_number}`);
 
-    sendOrderEmail(order).catch((error) => {
+    sendOrderEmailWithResend(order).catch((error) => {
       console.error(
-        `No se pudo enviar el correo del pedido ${order.order_number}:`,
+        `Error inesperado al enviar el correo del pedido ${order.order_number}:`,
         error
       );
     });

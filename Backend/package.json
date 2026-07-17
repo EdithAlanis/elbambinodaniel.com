@@ -1,8 +1,8 @@
 {
   "name": "elbambinodaniel-pedidos",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": true,
-  "description": "Backend estable con aviso automático por correo",
+  "description": "Backend estable con aviso automático de pedidos mediante Resend",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -14,7 +14,6 @@
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
-    "pg": "^8.13.1",
-    "nodemailer": "^6.10.1"
+    "pg": "^8.13.1"
   }
 }
