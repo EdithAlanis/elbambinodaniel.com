@@ -3,6 +3,7 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const { Pool } = require("pg");
 const path = require("path");
+const nodemailer = require("nodemailer");
 
 const app = express();
 const PORT = Number(process.env.PORT || 10000);
@@ -98,6 +99,178 @@ function requireAdmin(req, res, next) {
   }
 }
 
+
+function formatMoney(value) {
+  return new Intl.NumberFormat("es-MX", {
+    style: "currency",
+    currency: "MXN"
+  }).format(Number(value || 0));
+}
+
+function formatOrderItems(items) {
+  if (!Array.isArray(items) || items.length === 0) {
+    return "Sin productos";
+  }
+
+  return items
+    .map((item, index) => {
+      const name =
+        item.name ||
+        item.nombre ||
+        item.product ||
+        item.producto ||
+        "Producto";
+      const quantity = Number(item.quantity || item.cantidad || 1);
+      const price = Number(item.price || item.precio || 0);
+      const subtotal = Number(
+        item.subtotal ||
+        item.total ||
+        quantity * price
+      );
+
+      return [
+        `${index + 1}. ${name}`,
+        `Cantidad: ${quantity}`,
+        `Precio: ${formatMoney(price)}`,
+        `Subtotal: ${formatMoney(subtotal)}`
+      ].join(" | ");
+    })
+    .join("\n");
+}
+
+async function sendOrderEmail(order) {
+  const emailUser = process.env.EMAIL_USER;
+  const emailPassword = process.env.EMAIL_APP_PASSWORD;
+  const emailTo =
+    process.env.EMAIL_TO ||
+    "prosecogdl@gmail.com";
+
+  if (!emailUser || !emailPassword) {
+    console.error(
+      "Correo automático no configurado. Revisa EMAIL_USER y " +
+      "EMAIL_APP_PASSWORD en Render."
+    );
+    return;
+  }
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: emailUser,
+      pass: emailPassword
+    }
+  });
+
+  const items = Array.isArray(order.items)
+    ? order.items
+    : [];
+
+  const text = [
+    `Nuevo pedido: ${order.order_number}`,
+    "",
+    `Cliente: ${order.customer_name}`,
+    `Teléfono: ${order.phone || "No indicado"}`,
+    `Domicilio: ${order.address}`,
+    `Colonia: ${order.neighborhood || "No indicada"}`,
+    `Ciudad: ${order.city || "No indicada"}`,
+    `Estado: ${order.state || "No indicado"}`,
+    `Horario: ${order.business_hours || "No indicado"}`,
+    `Cierra al mediodía: ${order.closes_midday ? "Sí" : "No"}`,
+    `Forma de pago: ${order.payment_method || "Pagar al recibir"}`,
+    "",
+    "PRODUCTOS",
+    formatOrderItems(items),
+    "",
+    `TOTAL ESTIMADO: ${formatMoney(order.total)}`,
+    "",
+    `Observaciones: ${order.notes || "Sin observaciones"}`,
+    "",
+    "Revise el pedido en el panel privado de elbambinodaniel.com."
+  ].join("\n");
+
+  const htmlItems = items.length
+    ? items
+        .map((item) => {
+          const name =
+            item.name ||
+            item.nombre ||
+            item.product ||
+            item.producto ||
+            "Producto";
+          const quantity = Number(item.quantity || item.cantidad || 1);
+          const price = Number(item.price || item.precio || 0);
+          const subtotal = Number(
+            item.subtotal ||
+            item.total ||
+            quantity * price
+          );
+
+          return `
+            <tr>
+              <td style="padding:8px;border:1px solid #ddd;">${name}</td>
+              <td style="padding:8px;border:1px solid #ddd;text-align:center;">${quantity}</td>
+              <td style="padding:8px;border:1px solid #ddd;text-align:right;">${formatMoney(price)}</td>
+              <td style="padding:8px;border:1px solid #ddd;text-align:right;">${formatMoney(subtotal)}</td>
+            </tr>
+          `;
+        })
+        .join("")
+    : `
+      <tr>
+        <td colspan="4" style="padding:8px;border:1px solid #ddd;">
+          Sin productos
+        </td>
+      </tr>
+    `;
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:760px;margin:auto;">
+      <h1 style="color:#0b4da2;">Nuevo pedido ${order.order_number}</h1>
+      <p><strong>Cliente:</strong> ${order.customer_name}</p>
+      <p><strong>Teléfono:</strong> ${order.phone || "No indicado"}</p>
+      <p><strong>Domicilio:</strong> ${order.address}</p>
+      <p><strong>Colonia:</strong> ${order.neighborhood || "No indicada"}</p>
+      <p><strong>Ciudad:</strong> ${order.city || "No indicada"}</p>
+      <p><strong>Estado:</strong> ${order.state || "No indicado"}</p>
+      <p><strong>Horario:</strong> ${order.business_hours || "No indicado"}</p>
+      <p><strong>Cierra al mediodía:</strong> ${order.closes_midday ? "Sí" : "No"}</p>
+      <p><strong>Forma de pago:</strong> ${order.payment_method || "Pagar al recibir"}</p>
+
+      <h2>Productos</h2>
+      <table style="border-collapse:collapse;width:100%;">
+        <thead>
+          <tr>
+            <th style="padding:8px;border:1px solid #ddd;text-align:left;">Producto</th>
+            <th style="padding:8px;border:1px solid #ddd;">Cantidad</th>
+            <th style="padding:8px;border:1px solid #ddd;text-align:right;">Precio</th>
+            <th style="padding:8px;border:1px solid #ddd;text-align:right;">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>${htmlItems}</tbody>
+      </table>
+
+      <h2 style="text-align:right;">Total estimado: ${formatMoney(order.total)}</h2>
+      <p><strong>Observaciones:</strong> ${order.notes || "Sin observaciones"}</p>
+      <p style="margin-top:30px;">
+        Revise este pedido en el panel privado de
+        <strong>elbambinodaniel.com</strong>.
+      </p>
+    </div>
+  `;
+
+  await transporter.sendMail({
+    from: `"El Bambino Daniel" <${emailUser}>`,
+    to: emailTo,
+    subject: `Nuevo pedido ${order.order_number}`,
+    text,
+    html
+  });
+
+  console.log(
+    `Correo enviado correctamente para ${order.order_number} a ${emailTo}`
+  );
+}
+
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true, service: "elbambinodaniel-pedidos" });
 });
@@ -175,6 +348,13 @@ app.post("/api/orders", async (req, res) => {
 
     const order = result.rows[0];
     console.log(`Pedido registrado correctamente: ${order.order_number}`);
+
+    sendOrderEmail(order).catch((error) => {
+      console.error(
+        `No se pudo enviar el correo del pedido ${order.order_number}:`,
+        error
+      );
+    });
 
     res.status(201).json({
       ok: true,

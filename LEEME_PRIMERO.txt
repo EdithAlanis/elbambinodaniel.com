@@ -1,16 +1,40 @@
-CORRECCIÓN DEL CARRITO
+EL BAMBINO DANIEL — CORREO AUTOMÁTICO DE PEDIDOS
 
-Este archivo reemplaza la versión anterior de config-final.js.
+ESTE ZIP SOLO ACTUALIZA EL BACKEND.
 
-La versión anterior modificó un contenedor demasiado grande y ocultó el carrito.
-Esta versión solo cambia el texto exacto de la leyenda y no modifica el diseño ni el carrito.
+ARCHIVOS A SUBIR
+1. Abra GitHub.
+2. Entre a la carpeta Backend.
+3. Use Add file > Upload files.
+4. Suba server.js y package.json.
+5. Reemplace los existentes.
+6. Presione Commit changes.
+7. Espere a que Render termine el despliegue.
 
-PASOS
-1. Abra la raíz del repositorio en GitHub.
-2. Use Add file > Upload files.
-3. Suba config-final.js y reemplace el existente.
-4. Presione Commit changes.
-5. Espere entre 1 y 3 minutos.
-6. Abra elbambinodaniel.com y presione Ctrl + F5.
+CONFIGURACIÓN EN RENDER
+En el servicio elbambinodaniel-pedidos, abra Ambiente y agregue:
 
-No cambie ningún otro archivo.
+EMAIL_USER
+La cuenta Gmail desde la que se enviarán los avisos.
+Ejemplo: prosecogdl@gmail.com
+
+EMAIL_APP_PASSWORD
+Una contraseña de aplicación de Google de 16 caracteres.
+NO use la contraseña normal del correo.
+
+EMAIL_TO
+prosecogdl@gmail.com
+
+Después guarde los cambios. Render hará otro despliegue.
+
+FUNCIONAMIENTO
+Cuando el cliente envíe un pedido:
+- El pedido se guarda en PostgreSQL.
+- Se genera el folio.
+- El cliente ve la confirmación.
+- Se envía automáticamente un correo con cliente, teléfono, domicilio,
+  productos, cantidades, total y observaciones.
+
+IMPORTANTE
+El pedido se guarda aunque el correo falle. En Registros de Render aparecerá
+el motivo del error para poder corregirlo.
