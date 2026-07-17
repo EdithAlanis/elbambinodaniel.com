@@ -1,27 +1,20 @@
-EL BAMBINO DANIEL — ACTUALIZACIÓN FINAL SIN META
+ACTUALIZACIÓN INMEDIATA — EL BAMBINO DANIEL
 
-INCLUYE
-1. tienda-final.js:
-   - Mantiene el carrito y el envío automático del pedido al servidor.
-   - Actualiza la leyenda autorizada:
-     * Entrega sin costo desde $1,000.00 en Zona Metropolitana.
-     * Entrega sin costo desde $1,200.00 en envíos foráneos.
-     * Cargo de $250.00 en pedidos menores.
+Este ZIP contiene únicamente los archivos que deben reemplazarse.
 
-2. Backend/server.js y Backend/package.json:
-   - Guardan automáticamente cada pedido en PostgreSQL.
-   - Mantienen el panel privado, pendientes, atendidos e histórico.
-   - Eliminan completamente la conexión con Meta y los tokens de WhatsApp.
+1. En la raíz de GitHub:
+   Reemplace tienda-final.js con el archivo de SUBIR_A_LA_RAIZ.
 
-SUBIDA A GITHUB
-A) Abra SUBIR_A_LA_RAIZ_DE_GITHUB.
-   Suba tienda-final.js a la raíz del repositorio y reemplace el existente.
+2. Dentro de la carpeta Backend:
+   Reemplace server.js y package.json con los archivos de Backend.
 
-B) Abra Backend.
-   Suba server.js y package.json dentro de la carpeta Backend y reemplace los existentes.
+3. Presione Commit changes y espere el despliegue.
 
-C) Presione Commit changes.
-D) Espere a que GitHub Pages y Render terminen sus despliegues.
+CAMBIO INCLUIDO
+- Entrega sin costo desde $1,000.00 en Zona Metropolitana.
+- Entrega sin costo desde $1,200.00 en envíos foráneos.
+- Cargo de $250.00 en pedidos menores.
+- Se mantiene el pedido automático al servidor y el panel de pedidos.
+- Se elimina la dependencia de Meta/WhatsApp para evitar fallas.
 
-NO ES NECESARIO CAMBIAR VARIABLES DE META.
-Puede dejarlas en Render o eliminarlas; este backend ya no las utiliza.
+Los archivos fueron validados antes de generar este ZIP.
