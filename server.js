@@ -1,4 +1,4 @@
-const express = require("express");
+const expreso = requerir("expreso");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const { Pool } = require("pg");
@@ -62,98 +62,98 @@ async function initDb() {
   `);
 }
 
-function createOrderNumber() {
-  const d = new Date();
-  const date = [
-    d.getFullYear(),
-    String(d.getMonth() + 1).padStart(2, "0"),
-    String(d.getDate()).padStart(2, "0")
-  ].join("");
-  const random = Math.floor(1000 + Math.random() * 9000);
-  return `EBD-${date}-${random}`;
+función crearNúmero de pedido() {
+  constante d = nuevo Fecha();
+  constante fecha = [
+    d.obtener año completo(),
+    Cadena(d.obtener mes() + 1).caminoInicio(2, "0"),
+    Cadena(d.obtener fecha()).caminoInicio(2, "0")
+  ].unirse("");
+  constante aleatorio = Matemáticas.piso(1000 + Matemáticas.aleatorio() * 9000);
+  devolver `EBD-${fecha}-${aleatorio}`;
 }
 
-function requireAdmin(req, res, next) {
-  const header = req.headers.authorization || "";
-  const token = header.startsWith("Bearer ") ? header.slice(7) : "";
-  try {
-    req.admin = jwt.verify(token, JWT_SECRET);
-    next();
-  } catch {
-    res.status(401).json({ ok: false, error: "Acceso no autorizado" });
+función requerirAdmin(req, res, próximo) {
+  constante encabezamiento = req.encabezados.autorización || "";
+  constante simbólico = encabezamiento.comienza con("portador") ? encabezamiento.rebanada(7) : "";
+  intentar {
+    req.administración = jwt.verificar(simbólico, JWT_SECRET);
+    próximo();
+  } atrapar {
+    res.estado(401).json({ OK: FALSO, error: "Acceso no autorizado" });
   }
 }
 
-async function sendWhatsAppNotification(order) {
-  const token = process.env.WHATSAPP_TOKEN;
-  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
-  const adminPhone = process.env.ADMIN_WHATSAPP;
+asíncrono función enviarWhatsAppNotificación(orden) {
+ constante adminTeléfono = proceso.ambiente.ADMIN_WHATSAPP;
+  constante número de teléfonoId = proceso.ambiente.WHATSAPP_PHONE_NUMBER_ID;
+  constante adminTeléfono = proceso.ambiente.ADMIN_WHATAPP;
 
-  if (!token || !phoneNumberId || !adminPhone) return;
+  si (!simbólico || !número de teléfonoId || !adminTeléfono) devolver;
 
-  const message =
-    `Tienes el pedido ${order.order_number} en elbambinodaniel.com. ` +
+  constante mensaje =
+    `Tienes el pedido ${orden.número de orden} en elbambinodaniel.com. ` +
     `Ingresa al panel privado para revisarlo.`;
 
-  const response = await fetch(
-    `https://graph.facebook.com/v23.0/${phoneNumberId}/messages`,
+  constante respuesta = esperar buscar(
+    `https://graph.facebook.com/v23.0/${número de teléfonoId}/mensajes`,
     {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
+      método: "CORREO",
+      encabezados: {
+        Autorización: `Portador ${simbólico}`,
+        "Tipo de contenido": "aplicación/json"
       },
-      body: JSON.stringify({
-        messaging_product: "whatsapp",
-        to: adminPhone,
-        type: "text",
-        text: { body: message }
+      cuerpo: JSON.encadenar({
+        producto_mensajería: "whatsapp",
+        a: adminTeléfono,
+        tipo: "texto",
+        texto: { cuerpo: mensaje }
       })
     }
   );
 
-  if (!response.ok) {
-    const detail = await response.text();
-    console.error("No se pudo enviar WhatsApp:", detail);
+  si (!respuesta.OK) {
+    constante detalle = esperar respuesta.texto();
+    consola.error("No se pudo enviar WhatsApp:", detalle);
   }
 }
 
-app.get("/api/health", (_req, res) => {
-  res.json({ ok: true, service: "elbambinodaniel-pedidos" });
+aplicación.conseguir("/api/salud", (_req, res) => {
+  res.json({ OK: verdadero, servicio: "elbambinodaniel-pedidos" });
 });
 
-app.post("/api/admin/login", (req, res) => {
-  const password = String(req.body?.password || "");
-  if (password !== ADMIN_PASSWORD) {
-    return res.status(401).json({ ok: false, error: "Clave incorrecta" });
+aplicación.correo("/api/admin/iniciar sesión", (req, res) => {
+  constante contraseña = Cadena(req.cuerpo?.contraseña || "");
+  si (contraseña !== ADMIN_PASSWORD) {
+    devolver res.estado(401).json({ OK: FALSO, error: "Clave incorrecta" });
   }
-  const token = jwt.sign({ role: "admin" }, JWT_SECRET, { expiresIn: "12h" });
-  res.json({ ok: true, token });
+  constante simbólico = jwt.firmar({ role: "administración" }, JWT_SECRET, { caduca en: "12h" });
+  res.json({ OK: verdadero, simbólico });
 });
 
-app.post("/api/orders", async (req, res) => {
-  try {
-    const body = req.body || {};
-    const customerName = String(body.customerName || body.nombre || "").trim();
-    const address = String(body.address || body.domicilio || body.ubicacion || "").trim();
-    const items = Array.isArray(body.items || body.productos)
-      ? (body.items || body.productos)
+aplicación.correo("/api/órdenes", asíncrono (req, res) => {
+  intentar {
+    constante cuerpo = req.cuerpo || {};
+    constante nombre del cliente = Cadena(cuerpo.nombre del cliente || cuerpo.nombre || "").recortar();
+    constante DIRECCIÓN = Cadena(cuerpo.DIRECCIÓN || cuerpo.domicilio || cuerpo.ubicacion || "").recortar();
+    constante elementos = Formación.esmatriz(cuerpo.elementos || cuerpo.productos)
+      ? (cuerpo.elementos || cuerpo.productos)
       : [];
 
-    if (!customerName || !address || items.length === 0) {
-      return res.status(400).json({
-        ok: false,
+    si (!nombre del cliente || !DIRECCIÓN || elementos.longitud === 0) {
+      devolver res.estado(400).json({
+        OK: FALSO,
         error: "Faltan nombre, domicilio o productos."
       });
     }
 
-    const total = Number(body.total || 0);
-    const orderNumber = createOrderNumber();
+    constante total = Número(cuerpo.total || 0);
+    constante número de orden = crearNúmero de pedido();
 
-    const values = [
-      orderNumber,
-      customerName,
-      String(body.phone || body.telefono || ""),
+    constante valores = [
+      número de orden,
+      nombre del cliente,
+      Cadena(cuerpo.teléfono || cuerpo.teléfono || ""),
       address,
       String(body.neighborhood || body.colonia || ""),
       String(body.city || body.ciudad || ""),
