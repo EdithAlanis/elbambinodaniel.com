@@ -115,3 +115,163 @@ function init(){
   renderCart();renderProducts();
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+
+/* Corrección robusta del proceso de pedido */
+(function(){
+  function normalizeText(value){
+    return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase();
+  }
+
+  function findCheckoutDrawer(){
+    return document.getElementById('checkoutDrawer')
+      || document.getElementById('pedidoDrawer')
+      || document.getElementById('checkout')
+      || document.getElementById('pedido')
+      || document.querySelector('.checkout-drawer')
+      || document.querySelector('[data-checkout-drawer]');
+  }
+
+  function findCheckoutForm(){
+    return document.getElementById('checkoutForm')
+      || document.getElementById('pedidoForm')
+      || document.querySelector('form[data-checkout]')
+      || document.querySelector('.checkout-drawer form')
+      || document.querySelector('[data-checkout-drawer] form');
+  }
+
+  function openCheckout(){
+    if(!cartEntries().length){
+      alert('Agregue al menos un producto al carrito.');
+      return;
+    }
+    const cartDrawer=document.getElementById('cartDrawer') || document.querySelector('.cart-drawer');
+    if(cartDrawer?.id) closePanel(cartDrawer.id);
+    const drawer=findCheckoutDrawer();
+    if(!drawer){
+      alert('No se encontró el formulario del pedido.');
+      return;
+    }
+    setTimeout(()=>{
+      if(drawer.id) openPanel(drawer.id);
+      else{
+        const overlay=document.getElementById('overlay');
+        if(overlay) overlay.hidden=false;
+        drawer.hidden=false;
+        requestAnimationFrame(()=>drawer.classList.add('open'));
+      }
+    },250);
+  }
+
+  async function submitCheckout(form){
+    const items=cartEntries();
+    if(!items.length) throw new Error('El carrito está vacío.');
+
+    const data=Object.fromEntries(new FormData(form).entries());
+    const get=(...keys)=>{
+      for(const key of keys){
+        if(data[key]!==undefined && String(data[key]).trim()!=='') return String(data[key]).trim();
+      }
+      return '';
+    };
+
+    const cliente={
+      nombre:get('nombre','customerName','cliente','nombreCliente'),
+      telefono:get('telefono','phone','teléfono'),
+      domicilio:get('domicilio','address','direccion','dirección','ubicacion'),
+      colonia:get('colonia','neighborhood'),
+      ciudad:get('ciudad','city'),
+      estado:get('estado','state'),
+      cp:get('cp','codigoPostal','postalCode'),
+      horario:get('horario','businessHours','horarioEstablecimiento'),
+      cierra:get('cierra','cierraMediodia','closesMidday'),
+      pago:get('pago','paymentMethod','formaPago') || 'Pagar al recibir',
+      observaciones:get('observaciones','notes','notas')
+    };
+
+    if(!cliente.nombre || !cliente.domicilio){
+      throw new Error('Complete nombre y domicilio.');
+    }
+
+    const order={
+      cliente,
+      productos:items.map(item=>({
+        id:item.product.id,
+        nombre:item.product.name,
+        cantidad:item.qty,
+        precioEstimado:item.product.price
+      })),
+      subtotalEstimado:items.reduce((sum,item)=>sum+item.product.price*item.qty,0)
+    };
+
+    return sendOrder(order);
+  }
+
+  function bindCheckout(){
+    const directButtons=[
+      document.getElementById('checkoutButton'),
+      document.getElementById('finalizarPedido'),
+      document.getElementById('btnPedido'),
+      ...document.querySelectorAll('[data-checkout-open],.checkout-button,.finalize-order')
+    ].filter(Boolean);
+
+    document.querySelectorAll('button,a').forEach(el=>{
+      const txt=normalizeText(el.textContent);
+      if((txt.includes('hacer pedido') || txt.includes('finalizar pedido') || txt.includes('continuar pedido')) && !directButtons.includes(el)){
+        directButtons.push(el);
+      }
+    });
+
+    directButtons.forEach(button=>{
+      if(button.dataset.checkoutBound==='1') return;
+      button.dataset.checkoutBound='1';
+      button.addEventListener('click',event=>{
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        openCheckout();
+      },true);
+    });
+
+    const form=findCheckoutForm();
+    if(form && form.dataset.submitBound!=='1'){
+      form.dataset.submitBound='1';
+      form.addEventListener('submit',async event=>{
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        const button=form.querySelector('button[type="submit"],input[type="submit"]');
+        const oldText=button?.textContent;
+        if(button){button.disabled=true;if(button.tagName==='BUTTON')button.textContent='ENVIANDO PEDIDO...';}
+        try{
+          const result=await submitCheckout(form);
+          alert(`Pedido enviado correctamente. Folio: ${result.orderNumber||result.numeroPedido||''}`);
+          state.cart={};saveCart();renderCart();form.reset();
+          const drawer=findCheckoutDrawer();
+          if(drawer?.id) closePanel(drawer.id);
+        }catch(error){
+          alert(`No fue posible enviar el pedido. ${error.message}`);
+        }finally{
+          if(button){button.disabled=false;if(button.tagName==='BUTTON' && oldText)button.textContent=oldText;}
+        }
+      },true);
+    }
+
+    document.querySelectorAll('button').forEach(button=>{
+      const txt=normalizeText(button.textContent);
+      if(!(txt.includes('confirmar pedido') || txt.includes('enviar pedido'))) return;
+      if(button.dataset.confirmBound==='1') return;
+      button.dataset.confirmBound='1';
+      button.addEventListener('click',event=>{
+        const form=button.closest('form') || findCheckoutForm();
+        if(!form) return;
+        if(button.type!=='submit'){
+          event.preventDefault();
+          form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
+        }
+      });
+    });
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bindCheckout);
+  else bindCheckout();
+  setTimeout(bindCheckout,500);
+  setTimeout(bindCheckout,1500);
+})();
