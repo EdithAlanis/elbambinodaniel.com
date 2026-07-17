@@ -1,0 +1,19 @@
+{
+  "name": "elbambinodaniel-pedidos",
+  "version": "1.0.2",
+  "private": true,
+  "description": "Backend de pedidos de El Bambino Daniel",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.1"
+  }
+}

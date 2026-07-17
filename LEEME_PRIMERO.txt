@@ -1,25 +1,32 @@
-EL BAMBINO DANIEL — BACKEND CORREGIDO PARA WHATSAPP
+EL BAMBINO DANIEL — BACKEND FINAL CORREGIDO
 
-1. Descomprima este ZIP.
-2. En GitHub abra la carpeta Backend.
-3. Seleccione Add file > Upload files.
-4. Suba server.js y package.json reemplazando los existentes.
+ARCHIVOS QUE DEBE SUBIR A GITHUB
+- Backend/server.js
+- Backend/package.json
+
+PASOS
+1. Abra la carpeta Backend de su repositorio.
+2. Use Add file > Upload files.
+3. Suba server.js y package.json.
+4. Acepte reemplazar los archivos existentes.
 5. Presione Commit changes.
-6. Render iniciará automáticamente una implementación nueva.
+6. Render iniciará automáticamente un nuevo despliegue.
 
-VARIABLES EN RENDER
-WHATSAPP_TOKEN
-WHATSAPP_PHONE_NUMBER_ID
-ADMIN_WHATSAPP
+NO SUBA TOKENS A GITHUB.
+
+VARIABLES QUE DEBEN EXISTIR EN RENDER
 DATABASE_URL
 ADMIN_PASSWORD o ADMIN_PIN
 JWT_SECRET
 ALLOWED_ORIGINS o ALLOWED_ORIGIN
+WHATSAPP_TOKEN
+WHATSAPP_PHONE_NUMBER_ID
+ADMIN_WHATSAPP
 
-VALORES YA CONOCIDOS
+VALORES YA IDENTIFICADOS
 WHATSAPP_PHONE_NUMBER_ID=936642243541482
 ADMIN_WHATSAPP=5213331191167
 
-IMPORTANTE
-No contiene token. Genere uno nuevo y colóquelo únicamente en Render.
-No publique el token en GitHub ni en el chat.
+SEGURIDAD
+El token que apareció en el chat ya no debe utilizarse.
+Genere uno nuevo y colóquelo únicamente en Render.
