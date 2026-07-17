@@ -1,20 +1,13 @@
-ACTUALIZACIÓN INMEDIATA — EL BAMBINO DANIEL
+CAMBIO VISIBLE DE LA LEYENDA
 
-Este ZIP contiene únicamente los archivos que deben reemplazarse.
+Este archivo corrige directamente el archivo que la página ya está cargando.
 
-1. En la raíz de GitHub:
-   Reemplace tienda-final.js con el archivo de SUBIR_A_LA_RAIZ.
+PASOS
+1. Abra la raíz del repositorio de GitHub.
+2. Use Add file > Upload files.
+3. Suba config-final.js y reemplace el existente.
+4. Presione Commit changes.
+5. Espere 1 a 3 minutos.
+6. Abra elbambinodaniel.com y presione Ctrl + F5.
 
-2. Dentro de la carpeta Backend:
-   Reemplace server.js y package.json con los archivos de Backend.
-
-3. Presione Commit changes y espere el despliegue.
-
-CAMBIO INCLUIDO
-- Entrega sin costo desde $1,000.00 en Zona Metropolitana.
-- Entrega sin costo desde $1,200.00 en envíos foráneos.
-- Cargo de $250.00 en pedidos menores.
-- Se mantiene el pedido automático al servidor y el panel de pedidos.
-- Se elimina la dependencia de Meta/WhatsApp para evitar fallas.
-
-Los archivos fueron validados antes de generar este ZIP.
+No cambie ningún otro archivo.
