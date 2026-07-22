@@ -1,30 +1,22 @@
-EL BAMBINO DANIEL — ZIP FINAL ÚNICO
+EL BAMBINO DANIEL — VERSIÓN ACTUALIZADA 22-07-2026
 
-MUY IMPORTANTE:
-LOS TRES ARCHIVOS SE SUBEN A LA RAÍZ DEL REPOSITORIO.
-NO LOS SUBA DENTRO DE LA CARPETA BACKEND.
-
-ARCHIVOS:
+ARCHIVOS PRINCIPALES:
+- index.html
+- productos-basicos.js (catálogo básico completo)
+- productos-finales.js (copia compatible del catálogo básico)
+- tienda-final.js (buscador, carrito, especiales, guantes y promociones)
 - config-final.js
-- server.js
-- package.json
 
-PASOS:
-1. Abra la raíz del repositorio elbambinodaniel.com en GitHub.
-2. Presione Add file > Upload files.
-3. Suba los tres archivos.
-4. Acepte reemplazar los archivos existentes.
-5. Presione Commit changes.
-6. Espere a que Render termine el despliegue.
+CAMBIOS INCLUIDOS:
+- Buscador conectado al catálogo básico.
+- Medicamentos especiales con precios proporcionados.
+- Alprazolam escrito correctamente.
+- Promoción 3 Forxiga por $1,000 y 3 Trayenta por $1,000.
+- Seis productos de guantes separados, todos a $160 por caja con 100 guantes.
+- Banner de promoción Forxiga/Trayenta añadido al carrusel.
 
-EN RENDER DEBE EXISTIR:
-RESEND_API_KEY = la clave que comienza con re_
-
-El correo llegará automáticamente a:
-prosecogdl@gmail.com
-
-No necesita Gmail, contraseña de aplicación ni Meta.
-
-Después del despliegue:
-1. Haga un pedido de prueba.
-2. Revise prosecogdl@gmail.com, incluyendo Spam y Promociones.
+PARA PUBLICAR EN GITHUB:
+1. Descomprimir el ZIP.
+2. Subir todos los archivos a la raíz del repositorio.
+3. Reemplazar los archivos con el mismo nombre.
+4. Esperar unos minutos y actualizar la página con Ctrl+F5.

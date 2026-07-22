@@ -1,61 +1,52 @@
 const PRODUCTS = [
   ...(window.BASIC_PRODUCTS || []),
-  {id:'p-tramadol-adiolol-100',name:'Tramadol cápsulas 100 mg ADIOL',detail:'Caja con 10 cápsulas · Requiere receta médica',price:75,category:'Medicamento especial',icon:'🔒',special:true},
-  {id:'p-alprazolam025',name:'Alprazolam 0.25 mg',detail:'Caja con 30 tabletas',price:145,category:'Medicamento especial',icon:'🔒',special:true},
-  {id:'p-alprazolam05',name:'Alprazolam 0.50 mg',detail:'Caja con 30 tabletas',price:202,category:'Medicamento especial',icon:'🔒',special:true},
-  {id:'p-alprazolam1',name:'Alprazolam 1 mg',detail:'Caja con 30 tabletas',price:174,category:'Medicamento especial',icon:'🔒',special:true},
-  {id:'p-alprazolam2',name:'Alprazolam 2 mg',detail:'Caja con 30 tabletas',price:283,category:'Medicamento especial',icon:'🔒',special:true},
-  {id:'p-farmapram05',name:'Farmapram 0.50 mg',detail:'Caja con 30 tabletas',price:256,category:'Medicamento especial',icon:'🔒',special:true},
-  {id:'p-farmapram2',name:'Farmapram 2 mg',detail:'Caja con 30 tabletas',price:413,category:'Medicamento especial',icon:'🔒',special:true},
-  {id:'p-bromazepam',name:'Bromazepam 3 mg',detail:'Caja con 30 tabletas',price:180,category:'Medicamento especial',icon:'🔒',special:true},
-  {id:'p-clonazepam-gotas',name:'Clonazepam gotas',detail:'Presentación sujeta a disponibilidad',price:90,category:'Medicamento especial',icon:'🔒',special:true},
-  {id:'p-clonazepam-tabs',name:'Clonazepam tabletas',detail:'Presentación sujeta a disponibilidad',price:90,category:'Medicamento especial',icon:'🔒',special:true},
-  {id:'p-diazepam',name:'Diazepam',detail:'Presentación sujeta a disponibilidad',price:90,category:'Medicamento especial',icon:'🔒',special:true},
-  {id:'p-metilfenidato',name:'Metilfenidato 10 mg',detail:'Caja con 60 tabletas',price:300,category:'Medicamento especial',icon:'🔒',special:true},
-  {id:'p-tradea',name:'Tradea LP 20 mg',detail:'Caja con 30 tabletas',price:973,category:'Medicamento especial',icon:'🔒',special:true},
-  {id:'p-axcion',name:'Axcion Fentermina 30 mg',detail:'Caja con 30 tabletas',price:310,category:'Medicamento especial',icon:'🔒',special:true},
-  {id:'p-axcion-ap',name:'Axcion AP Fentermina 30 mg',detail:'Caja con 30 tabletas',price:498,category:'Medicamento especial',icon:'🔒',special:true},
-  {id:'p-itravil',name:'Itravil Clobenzorex 30 mg',detail:'Caja con 60 cápsulas',price:835,category:'Medicamento especial',icon:'🔒',special:true},
-  {id:'p-terfarmex',name:'Terfarmex Fentermina 15 mg',detail:'Presentación sujeta a disponibilidad',price:228,category:'Medicamento especial',icon:'🔒',special:true},
-  {id:'p-tramadol-para',name:'Tramadol / Paracetamol Alpharma',detail:'Presentación sujeta a disponibilidad',price:75,category:'Medicamento especial',icon:'🔒',special:true},
-  {id:'p-tramadol-gotas',name:'Tramadol en gotas Alpharma',detail:'Presentación sujeta a disponibilidad',price:75,category:'Medicamento especial',icon:'🔒',special:true},
-  {id:'p-oximetro-nino',name:'Oxímetro de niño',detail:'Equipo de monitoreo pediátrico',price:180,category:'Otros productos',icon:'👶'},
+
+  {id:'promo-forxiga-3',name:'Promoción: 3 Forxiga',detail:'3 cajas por $1,000 pesos',price:1000,category:'Diabetes',icon:'💙',badge:'Súper oferta'},
+  {id:'promo-trayenta-3',name:'Promoción: 3 Trayenta',detail:'3 cajas por $1,000 pesos',price:1000,category:'Diabetes',icon:'💙',badge:'Súper oferta'},
+
+  {id:'guante-nitrilo-chico',name:'Guantes de nitrilo chico',detail:'Caja con 100 guantes',price:160,category:'Guantes',icon:'🧤'},
+  {id:'guante-nitrilo-mediano',name:'Guantes de nitrilo mediano',detail:'Caja con 100 guantes',price:160,category:'Guantes',icon:'🧤'},
+  {id:'guante-nitrilo-grande',name:'Guantes de nitrilo grande',detail:'Caja con 100 guantes',price:160,category:'Guantes',icon:'🧤'},
+  {id:'guante-ambiderm-esteril-chico',name:'Guantes Ambiderm estéril chico',detail:'Caja con 100 guantes',price:160,category:'Guantes',icon:'🧤'},
+  {id:'guante-ambiderm-esteril-mediano',name:'Guantes Ambiderm estéril mediano',detail:'Caja con 100 guantes',price:160,category:'Guantes',icon:'🧤'},
+  {id:'guante-ambiderm-esteril-grande',name:'Guantes Ambiderm estéril grande',detail:'Caja con 100 guantes',price:160,category:'Guantes',icon:'🧤'},
+
+  {id:'p-alprazolam025',name:'Alprazolam 0.25 mg',detail:'Caja con 30 tabletas · Requiere receta médica',price:130,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-alprazolam05',name:'Alprazolam 0.50 mg',detail:'Caja con 30 tabletas · Requiere receta médica',price:197,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-alprazolam1',name:'Alprazolam 1 mg',detail:'Caja con 30 tabletas · Requiere receta médica',price:189,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-alprazolam2',name:'Alprazolam 2 mg',detail:'Caja con 30 tabletas · Requiere receta médica',price:283,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-axcion',name:'Axcion Fentermina 30 mg',detail:'Caja con 30 tabletas · Requiere receta médica',price:310,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-axcion-ap',name:'Axcion AP Fentermina 30 mg',detail:'Caja con 30 tabletas AP · Requiere receta médica',price:498,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-bromazepam',name:'Bromazepam 3 mg',detail:'Caja con 30 tabletas · Requiere receta médica',price:180,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-clonazepam-gotas',name:'Clonazepam gotas',detail:'Requiere receta médica',price:90,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-clonazepam-tabs',name:'Clonazepam tabletas',detail:'Requiere receta médica',price:90,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-diazepam',name:'Diazepam',detail:'Requiere receta médica',price:90,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-diazepam-tempus',name:'Diazepam 10 mg Tempus',detail:'Requiere receta médica',price:100,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-diazepam-amp',name:'Diazepam, 50 ampolletas',detail:'Requiere receta médica',price:580,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-esbecalps',name:'Esbecalps',detail:'Caja con 60 tabletas · Requiere receta médica',price:837,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-farmapram05',name:'Farmapram 0.50 mg',detail:'Alprazolam, caja con 30 tabletas · Requiere receta médica',price:256,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-farmapram2',name:'Farmapram 2 mg',detail:'Alprazolam, caja con 30 tabletas · Requiere receta médica',price:413,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-imipramina',name:'Imipramina 25 mg',detail:'Caja con 20 tabletas · Requiere receta médica',price:125,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-itravil',name:'Itravil Clobenzorex 30 mg',detail:'Caja con 60 cápsulas · Requiere receta médica',price:835,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-lose1',name:'Lose 1 mg',detail:'Requiere receta médica',price:243,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-lose2',name:'Lose 2 mg',detail:'Requiere receta médica',price:290,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-metilfenidato',name:'Metilfenidato 10 mg',detail:'Caja con 60 tabletas · Requiere receta médica',price:330,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-obeclox',name:'Obeclox',detail:'Caja con 60 cápsulas · Requiere receta médica',price:864,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-terfarmex',name:'Terfarmex Fentermina 15 mg',detail:'Requiere receta médica',price:228,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-tradea',name:'Tradea LP 20 mg',detail:'Metilfenidato de liberación prolongada, caja con 30 tabletas · Requiere receta médica',price:973,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-tramadol-para',name:'Tramadol / Paracetamol Alpharma',detail:'Requiere receta médica',price:75,category:'Medicamento especial',icon:'🔒',special:true},
+  {id:'p-tramadol-gotas',name:'Tramadol en gotas Alpharma',detail:'Requiere receta médica',price:75,category:'Medicamento especial',icon:'🔒',special:true},
+
+  {id:'p-lampara-oidos',name:'Lámpara para oídos',detail:'Equipo médico',price:100,category:'Otros productos',icon:'🩺'},
+  {id:'p-suplemento-17-vit',name:'Suplemento alimenticio con 17 vitaminas',detail:'Suplemento alimenticio',price:300,category:'Vitaminas y suplementos',icon:'🌿'},
+  {id:'p-oximetro-nino',name:'Oxímetro para niño',detail:'Equipo de monitoreo pediátrico',price:180,category:'Otros productos',icon:'👶'},
   {id:'p-oximetro-a2',name:'Oxímetro A2',detail:'Medición de saturación de oxígeno',price:100,category:'Otros productos',icon:'🩺'},
   {id:'p-oximetro-economico',name:'Oxímetro económico',detail:'Equipo portátil',price:90,category:'Otros productos',icon:'🫁'},
-  {id:'p-dengue',name:'Prueba Dengue Dúo Realy',detail:'Precio por pieza',price:90,category:'Otros productos',icon:'🦟'},
-  {id:'p-covid',name:'Prueba COVID e Influenza Dúo o VIH',detail:'Precio por pieza',price:90,category:'Otros productos',icon:'🦠'},
-  {id:'p-antidoping',name:'Prueba antidoping de 6 parámetros',detail:'Precio por pieza',price:100,category:'Otros productos',icon:'🧪'},
-  {id:'p-triple',name:'Prueba triple Influenza A y B, SARS-CoV-2 y Virus Sincitial',detail:'Precio por pieza',price:100,category:'Otros productos',icon:'🧬'},
-  {id:'p-cuadruple',name:'Prueba cuádruple Influenza A y B, SARS-CoV-2, Virus Sincitial y Adenovirus',detail:'Precio por pieza',price:120,category:'Otros productos',icon:'🧬'},
-  {id:'p-kn95-negro',name:'Cubrebocas KN95 negros',detail:'Precio por pieza',price:5,category:'Otros productos',icon:'😷'},
-  {id:'p-oximetro-recargable',name:'Oxímetro recargable',detail:'Equipo recargable',price:280,category:'Otros productos',icon:'🩺'},
-  {id:'p-termometro-infrarrojo',name:'Termómetro infrarrojo',detail:'Equipo médico',price:220,category:'Otros productos',icon:'🌡️'},
-  {id:'p-nebulizador',name:'Nebulizador',detail:'Equipo médico',price:225,category:'Otros productos',icon:'💨'},
-  {id:'p-esfigmomanometro',name:'Esfigmomanómetro',detail:'Equipo médico',price:320,category:'Otros productos',icon:'🩺'},
-  {id:'p-estetoscopio',name:'Estetoscopio',detail:'Equipo médico',price:420,category:'Otros productos',icon:'🩺'},
-  {id:'p-atomizador-nebulizar',name:'Atomizador comprimido para nebulizar',detail:'Aparato para nebulización',price:420,category:'Otros productos',icon:'💨'},
-  {id:'p-glucometro',name:'Glucómetro con agujas y estuche',detail:'Equipo para medición de glucosa',price:440,category:'Otros productos',icon:'🩸'},
-  {id:'p-ttp-infantil',name:'Cubrebocas TTP infantil rosa o blanco',detail:'Caja con 50 piezas',price:60,category:'Otros productos',icon:'😷'},
-  {id:'p-ttp-negro',name:'Cubrebocas TTP negros',detail:'Caja con 50 piezas',price:60,category:'Otros productos',icon:'😷'},
-  {id:'p-kn94',name:'Cubrebocas KN94',detail:'Precio por pieza',price:5,category:'Otros productos',icon:'😷'},
-  {id:'p-tubo-rojo',name:'Tubo rojo',detail:'Caja con 100 piezas',price:220,category:'Otros productos',icon:'🧪'},
-  {id:'p-tubo-lila',name:'Tubo lila',detail:'Caja con 100 piezas',price:280,category:'Otros productos',icon:'🧪'},
-  {id:'p-cofias',name:'Paquete de 100 cofias',detail:'Paquete con 100 piezas',price:160,category:'Otros productos',icon:'🥼'},
-  {id:'p-baumanometro-escritorio',name:'Baumanómetro de escritorio',detail:'Equipo médico',price:220,category:'Otros productos',icon:'🩺'},
-  {id:'p-baumanometro-pulsera',name:'Baumanómetro de pulsera',detail:'Equipo médico',price:240,category:'Otros productos',icon:'⌚'},
-  {id:'p-termometro-nino',name:'Termómetro para niño',detail:'Equipo médico',price:55,category:'Otros productos',icon:'🌡️'},
-  {id:'p-termometro-mercurio',name:'Termómetro de mercurio',detail:'Equipo médico',price:20,category:'Otros productos',icon:'🌡️'},
-  {id:'p-termometro-pistola',name:'Termómetro tipo pistola',detail:'Equipo médico',price:160,category:'Otros productos',icon:'🌡️'},
-  {id:'p-termometro-digital',name:'Termómetro digital',detail:'Equipo médico',price:25,category:'Otros productos',icon:'🌡️'},
-  {id:'p-nebulizador-azul',name:'Nebulizador azul',detail:'Equipo médico',price:225,category:'Otros productos',icon:'💨'},
-  {id:'p-guantes-nitrilo-chico',name:'Guantes de nitrilo chicos',detail:'Caja',price:160,category:'Guantes',icon:'🧤'},
-  {id:'p-guantes-nitrilo-mediano',name:'Guantes de nitrilo medianos',detail:'Caja',price:160,category:'Guantes',icon:'🧤'},
-  {id:'p-guantes-nitrilo-grande',name:'Guantes de nitrilo grandes',detail:'Caja',price:160,category:'Guantes',icon:'🧤'},
-  {id:'p-guantes-ambiderm-chico',name:'Guantes Ambiderm estériles chicos',detail:'Caja',price:160,category:'Guantes',icon:'🧤'},
-  {id:'p-guantes-ambiderm-mediano',name:'Guantes Ambiderm estériles medianos',detail:'Caja',price:160,category:'Guantes',icon:'🧤'},
-  {id:'p-guantes-ambiderm-grande',name:'Guantes Ambiderm estériles grandes',detail:'Caja',price:160,category:'Guantes',icon:'🧤'},
-  {id:'p-forxiga',name:'Forxiga',detail:'Promoción: 3 cajas por $1,000.00',price:1000,category:'Diabetes',icon:'💙'},
-  {id:'p-trayenta',name:'Trayenta',detail:'Promoción: 3 cajas por $1,000.00',price:1000,category:'Diabetes',icon:'💙'}
+  {id:'p-dengue',name:'Prueba Dengue Dúo Realy',detail:'Precio por pieza',price:90,category:'Otros productos',icon:'🦟',badge:'Oferta'},
+  {id:'p-covid',name:'Prueba COVID e Influenza Dúo o VIH',detail:'Precio por pieza',price:90,category:'Otros productos',icon:'🦠',badge:'Oferta'},
+  {id:'p-antidoping',name:'Prueba antidoping de 6 parámetros',detail:'Precio por pieza',price:100,category:'Otros productos',icon:'🧪',badge:'Oferta'},
+  {id:'p-triple',name:'Prueba triple Influenza A y B, COVID-19 y Virus Sincitial',detail:'Precio por pieza',price:100,category:'Otros productos',icon:'🧬',badge:'Oferta'},
+  {id:'p-cuadruple',name:'Prueba cuádruple Influenza A y B, COVID-19, Virus Sincitial y Adenovirus',detail:'Precio por pieza',price:120,category:'Otros productos',icon:'🧬',badge:'Oferta'}
 ];
 
 const state={cart:JSON.parse(localStorage.getItem('elbambino-cart')||'{}'),category:'Todos',query:''};
@@ -274,4 +265,27 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   else bindCheckout();
   setTimeout(bindCheckout,500);
   setTimeout(bindCheckout,1500);
+})();
+
+
+/* Aviso autorizado de entrega y pedido mínimo */
+(function updateDeliveryNotice(){
+  const applyNotice = () => {
+    const box = document.querySelector('.final-price-notice');
+    if (!box) return;
+
+    box.innerHTML = `
+      <strong>Precio estimado</strong>
+      <span>El importe final se confirma cuando el pedido es preparado en el almacén.</span>
+      <span><strong>Disfruta de entrega a domicilio sin costo en pedidos desde $1,000.00 (Zona Metropolitana) y desde $1,200.00 (envíos foráneos).</strong></span>
+      <span>En pedidos de menor importe se aplicará un cargo de entrega de <strong>$250.00</strong>.</span>
+    `;
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyNotice);
+  } else {
+    applyNotice();
+  }
+  setTimeout(applyNotice, 500);
 })();
