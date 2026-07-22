@@ -1,22 +1,22 @@
-EL BAMBINO DANIEL — VERSIÓN ACTUALIZADA 22-07-2026
+CORRECCIÓN URGENTE DEL CATÁLOGO — EL BAMBINO DANIEL
 
-ARCHIVOS PRINCIPALES:
-- index.html
-- productos-basicos.js (catálogo básico completo)
-- productos-finales.js (copia compatible del catálogo básico)
-- tienda-final.js (buscador, carrito, especiales, guantes y promociones)
-- config-final.js
+Este ZIP incluye los archivos completos para que aparezcan:
+- Medicamentos básicos
+- Medicamentos especiales
+- Promociones de Forxiga y Trayenta
+- Guantes separados por tipo y talla
+- Buscador de productos
+- Carrito y formulario de pedido
 
-CAMBIOS INCLUIDOS:
-- Buscador conectado al catálogo básico.
-- Medicamentos especiales con precios proporcionados.
-- Alprazolam escrito correctamente.
-- Promoción 3 Forxiga por $1,000 y 3 Trayenta por $1,000.
-- Seis productos de guantes separados, todos a $160 por caja con 100 guantes.
-- Banner de promoción Forxiga/Trayenta añadido al carrusel.
+SUBA TODOS LOS ARCHIVOS DE ESTE ZIP A LA RAÍZ DEL REPOSITORIO Y ACEPTE REEMPLAZAR LOS EXISTENTES.
+No los coloque dentro de una carpeta.
 
-PARA PUBLICAR EN GITHUB:
-1. Descomprimir el ZIP.
-2. Subir todos los archivos a la raíz del repositorio.
-3. Reemplazar los archivos con el mismo nombre.
-4. Esperar unos minutos y actualizar la página con Ctrl+F5.
+Después de Commit changes, espere de 1 a 3 minutos y abra la página con Ctrl + F5.
+
+Archivos indispensables que deben quedar juntos en la raíz:
+index.html
+estilos-finales.css
+productos-basicos.js
+productos-finales.js
+tienda-final.js
+config-final.js
