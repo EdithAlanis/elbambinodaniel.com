@@ -56,3 +56,6 @@
   .pin-display{height:66px}
   #directLoginButton{min-height:62px}
 }
+
+/* Correccion: respetar elementos ocultos del panel */
+[hidden]{display:none !important;}

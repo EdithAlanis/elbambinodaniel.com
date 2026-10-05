@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Revisar pedidos | El Bambino Daniel</title>
+  <style>
+    :root{font-family:Arial,sans-serif;color:#16202a;background:#f4f7f9}
+    *{box-sizing:border-box}
+    body{margin:0}
+    header{background:#075e54;color:white;padding:18px 5%;display:flex;justify-content:space-between;align-items:center}
+    main{max-width:1100px;margin:30px auto;padding:0 18px}
+    .card{background:white;border-radius:16px;padding:20px;box-shadow:0 8px 28px #00000012;margin-bottom:18px}
+    input,button{font:inherit;padding:12px;border-radius:10px;border:1px solid #ccd5db}
+    button{cursor:pointer;background:#075e54;color:white;border:0;font-weight:700}
+    button.secondary{background:#546e7a}
+    button.danger{background:#b3261e}
+    .tabs{display:flex;gap:10px;margin-bottom:18px}
+    .hidden{display:none!important}
+    .order-head{display:flex;justify-content:space-between;gap:12px;align-items:start}
+    .order-number{font-size:1.15rem;font-weight:800;color:#075e54}
+    .items{width:100%;border-collapse:collapse;margin:12px 0}
+    .items td,.items th{border-bottom:1px solid #e5eaed;padding:8px;text-align:left}
+    .meta{line-height:1.55}
+    .total{font-size:1.15rem;font-weight:800}
+    #message{margin-top:10px;color:#b3261e}
+    @media(max-width:650px){.order-head{display:block}.tabs{flex-wrap:wrap}}
+  </style>
+</head>
+<body>
+<header>
+  <strong>El Bambino Daniel — Pedidos</strong>
+  <button id="logout" class="secondary hidden">Salir</button>
+</header>
+<main>
+  <section id="login" class="card">
+    <h1>Revisar pedidos</h1>
+    <p>Escribe la clave privada de administración.</p>
+    <form id="loginForm">
+      <input id="password" type="password" inputmode="numeric" placeholder="Clave" required>
+      <button type="submit">Entrar</button>
+    </form>
+    <div id="message"></div>
+  </section>
+
+  <section id="panel" class="hidden">
+    <div class="tabs">
+      <button data-status="pendiente">Pedidos pendientes</button>
+      <button data-status="atendido" class="secondary">Historial atendido</button>
+      <button id="refresh" class="secondary">Actualizar</button>
+    </div>
+    <div id="orders"></div>
+  </section>
+</main>
+<script>
+const login = document.querySelector("#login");
+const panel = document.querySelector("#panel");
+const ordersBox = document.querySelector("#orders");
+const message = document.querySelector("#message");
+const logout = document.querySelector("#logout");
+let currentStatus = "pendiente";
+
+function money(value){
+  return new Intl.NumberFormat("es-MX",{style:"currency",currency:"MXN"}).format(Number(value||0));
+}
+function esc(v){
+  return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+function token(){ return sessionStorage.getItem("ebd_admin_token") || ""; }
+
+async function api(url, options={}){
+  options.headers = {...(options.headers||{}),"Content-Type":"application/json"};
+  if(token()) options.headers.Authorization = `Bearer ${token()}`;
+  const r = await fetch(url, options);
+  const data = await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(data.error || "Error de conexión");
+  return data;
+}
+
+document.querySelector("#loginForm").addEventListener("submit", async e=>{
+  e.preventDefault();
+  message.textContent="";
+  try{
+    const data=await api("/api/admin/login",{
+      method:"POST",
+      body:JSON.stringify({password:document.querySelector("#password").value})
+    });
+    sessionStorage.setItem("ebd_admin_token",data.token);
+    showPanel();
+  }catch(err){message.textContent=err.message}
+});
+
+document.querySelectorAll("[data-status]").forEach(b=>b.addEventListener("click",()=>{
+  currentStatus=b.dataset.status;
+  loadOrders();
+}));
+document.querySelector("#refresh").addEventListener("click",loadOrders);
+logout.addEventListener("click",()=>{
+  sessionStorage.removeItem("ebd_admin_token");
+  location.reload();
+});
+
+async function showPanel(){
+  login.classList.add("hidden");
+  panel.classList.remove("hidden");
+  logout.classList.remove("hidden");
+  await loadOrders();
+}
+
+async function loadOrders(){
+  ordersBox.innerHTML='<div class="card">Cargando…</div>';
+  try{
+    const data=await api(`/api/admin/orders?status=${currentStatus}`);
+    if(!data.orders.length){
+      ordersBox.innerHTML='<div class="card">No hay pedidos en esta sección.</div>';
+      return;
+    }
+    ordersBox.innerHTML=data.orders.map(o=>{
+      const items=(o.items||[]).map(i=>`
+        <tr><td>${esc(i.nombre||i.name||i.producto||"Producto")}</td>
+        <td>${esc(i.cantidad||i.quantity||1)}</td>
+        <td>${money(i.precio||i.price||0)}</td></tr>`).join("");
+      return `<article class="card">
+        <div class="order-head">
+          <div>
+            <div class="order-number">${esc(o.order_number)}</div>
+            <small>${new Date(o.created_at).toLocaleString("es-MX")}</small>
+          </div>
+          <div class="total">${money(o.total)}</div>
+        </div>
+        <div class="meta">
+          <b>Cliente:</b> ${esc(o.customer_name)}<br>
+          <b>Teléfono:</b> ${esc(o.phone)}<br>
+          <b>Domicilio:</b> ${esc(o.address)}, ${esc(o.neighborhood)}, ${esc(o.city)}, ${esc(o.state)}<br>
+          <b>Horario:</b> ${esc(o.business_hours)}${o.closes_midday?" — Cierra al mediodía":""}<br>
+          <b>Pago:</b> ${esc(o.payment_method)}<br>
+          ${o.notes?`<b>Notas:</b> ${esc(o.notes)}<br>`:""}
+        </div>
+        <table class="items"><thead><tr><th>Producto</th><th>Cantidad</th><th>Precio</th></tr></thead>
+        <tbody>${items}</tbody></table>
+        ${o.status==="pendiente"
+          ? `<button onclick="changeStatus(${o.id},'attend')">Marcar atendido</button>`
+          : `<button class="secondary" onclick="changeStatus(${o.id},'reopen')">Regresar a pendientes</button>`}
+      </article>`;
+    }).join("");
+  }catch(err){
+    if(/autorizado/i.test(err.message)){
+      sessionStorage.removeItem("ebd_admin_token");
+      location.reload();
+    }else ordersBox.innerHTML=`<div class="card">${esc(err.message)}</div>`;
+  }
+}
+
+async function changeStatus(id, action){
+  await api(`/api/admin/orders/${id}/${action}`,{method:"PATCH",body:"{}"});
+  loadOrders();
+}
+
+if(token()) showPanel();
+</script>
+</body>
+</html>
